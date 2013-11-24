@@ -4,15 +4,7 @@ title: About
 permalink: /about/
 ---
 
-<img src="/images/about/avatar.png" title="wulfovitch" class="img_left" alt="wulfovitch" />
-
-### Who is wulfovitch?
-
-I am a student of computer science at the [University of Oldenburg][uni-ol] in Germany. I was always interested in all things that are related to computers, so the decision to study computer wasn't too hard. In fact by studying computer science, I learned a lot about computers itself and some of this knowledge I want to share with you on this blog.
-
-If you want to know more about me, follow me on [twitter][twitter]! 
-
-Don't hesitate to contact me via mail, {% include email.html %}, if you have something on your mind.
+<img src="/images/about/avatar.png" title="Caiyuanqing" class="img_left" alt="Caiyuanqing" />
 
 ### About this Site
 
