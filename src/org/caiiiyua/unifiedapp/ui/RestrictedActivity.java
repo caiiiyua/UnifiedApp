@@ -190,7 +190,7 @@ public interface RestrictedActivity {
      */
     public boolean hasWindowFocus();
 
-    void setPendingToastOperation(ToastBarOperation op);
+//    void setPendingToastOperation(ToastBarOperation op);
 
-    ToastBarOperation getPendingToastOperation();
+//    ToastBarOperation getPendingToastOperation();
 }

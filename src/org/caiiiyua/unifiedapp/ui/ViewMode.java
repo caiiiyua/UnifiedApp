@@ -17,13 +17,12 @@
 
 package org.caiiiyua.unifiedapp.ui;
 
-import android.os.Bundle;
-
-import com.google.common.collect.Lists;
-
 import java.util.ArrayList;
 
 import org.caiiiyua.unifiedapp.utils.LogUtils;
+
+import android.os.Bundle;
+//import com.google.common.collect.Lists;
 
 /**
  * Represents the view mode for the tablet Gmail activity.
@@ -54,7 +53,8 @@ public class ViewMode {
 
     // Key used to save this {@link ViewMode}.
     private static final String VIEW_MODE_KEY = "view-mode";
-    private final ArrayList<ModeChangeListener> mListeners = Lists.newArrayList();
+    private final ArrayList<ModeChangeListener> mListeners =
+                                new ArrayList<ViewMode.ModeChangeListener>();
     /**
      * The actual mode the activity is in. We start out with an UNKNOWN mode, and require entering
      * a valid mode after the object has been created.

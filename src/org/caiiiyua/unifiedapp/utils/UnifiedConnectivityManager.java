@@ -32,8 +32,6 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
-import com.google.common.collect.Lists;
-
 /**
  * Encapsulates functionality of ConnectivityManager for use in the Email application.  In
  * particular, this class provides callbacks for connectivity lost, connectivity restored, and
@@ -72,7 +70,8 @@ public class UnifiedConnectivityManager extends BroadcastReceiver {
     private boolean mRegistered = true;
     //
     private final ArrayList<ConnectivityStateChangeListener> mListeners =
-            Lists.newArrayList();
+            new ArrayList<UnifiedConnectivityManager.ConnectivityStateChangeListener>();
+//            Lists.newArrayList();
 
     public UnifiedConnectivityManager(Context context, String name)  {
         mContext = context;

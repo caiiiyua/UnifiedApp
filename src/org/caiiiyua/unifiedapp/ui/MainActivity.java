@@ -7,6 +7,7 @@ import org.caiiiyua.unifiedapp.utils.UnifiedConnectivityManager;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.view.Menu;
 
 public class MainActivity extends Activity implements ControllableActivity {
@@ -78,4 +79,9 @@ public class MainActivity extends Activity implements ControllableActivity {
         return null;
     }
 
+    @Override
+    public Context getActivityContext() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

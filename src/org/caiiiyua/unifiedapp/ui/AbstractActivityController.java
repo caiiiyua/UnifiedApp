@@ -1,6 +1,7 @@
 package org.caiiiyua.unifiedapp.ui;
 
 import java.util.Deque;
+import java.util.LinkedList;
 
 import org.caiiiyua.unifiedapp.utils.LogTag;
 import org.caiiiyua.unifiedapp.utils.Utils;
@@ -11,8 +12,6 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
-
-import com.google.common.collect.Lists;
 
 public abstract class AbstractActivityController implements ActivityController {
 
@@ -49,7 +48,8 @@ public abstract class AbstractActivityController implements ActivityController {
 
     private boolean mIsDragHappening;
 
-    private final Deque<UpOrBackHandler> mUpOrBackHandlers = Lists.newLinkedList();
+    private final Deque<UpOrBackHandler> mUpOrBackHandlers = 
+            new LinkedList<UpOrBackController.UpOrBackHandler>();
 
     public AbstractActivityController(MainActivity activity, ViewMode viewMode) {
         mActivity = activity;
