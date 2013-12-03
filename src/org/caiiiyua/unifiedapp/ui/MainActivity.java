@@ -4,6 +4,7 @@ import org.caiiiyua.unifiedapp.R;
 import org.caiiiyua.unifiedapp.R.layout;
 import org.caiiiyua.unifiedapp.R.menu;
 import org.caiiiyua.unifiedapp.utils.UnifiedConnectivityManager;
+import org.caiiiyua.unifiedapp.utils.Utils;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -12,10 +13,17 @@ import android.view.Menu;
 
 public class MainActivity extends Activity implements ControllableActivity {
 
+    private ViewMode mViewMode;
+    private ActivityController mController;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
+        mViewMode = new ViewMode();
+        final boolean tabletUi = Utils.useTabletUI(this.getResources());
+        mController = ControllerFactory.forActivity(this, mViewMode, tabletUi);
+        mController.onCreate(savedInstanceState);
     }
 
     @Override

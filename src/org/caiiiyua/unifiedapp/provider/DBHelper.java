@@ -1,14 +1,11 @@
 package org.caiiiyua.unifiedapp.provider;
 
-import java.sql.DatabaseMetaData;
 
 import org.caiiiyua.unifiedapp.utils.LogUtils;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.TextUtils;
 
 public final class DBHelper {
 
@@ -57,6 +54,28 @@ public final class DBHelper {
             db.execSQL("create table " + tableName + createString);
 
             String indexColumns[] = mDatabaseFactory.getIndexColumns();
+            if (indexColumns.length > 0) {
+                for (String columnName : indexColumns) {
+                    db.execSQL(createIndex(tableName, columnName));
+                }
+            }
+        }
+
+        // Create a table from Database factory
+        public void createTable(SQLiteDatabase db, DatabaseFactory dbFactory) {
+            if (dbFactory == null) {
+                return;
+            }
+            String tableName = dbFactory.getTableName();
+            String tableColmns = dbFactory.toString();
+            String createString = "(" + DBContent.RECORD_ID + "integer primary key autoincrement, "
+                    + tableColmns;
+            String altCreateString = "(" + DBContent.RECORD_ID + "integer unique, "
+                    + tableColmns;
+            // The table is created with schema here
+            db.execSQL("create table " + tableName + createString);
+
+            String indexColumns[] = dbFactory.getIndexColumns();
             if (indexColumns.length > 0) {
                 for (String columnName : indexColumns) {
                     db.execSQL(createIndex(tableName, columnName));
