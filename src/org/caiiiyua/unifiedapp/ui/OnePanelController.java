@@ -16,7 +16,6 @@ public class OnePanelController extends AbstractActivityController implements
 
     public OnePanelController(MainActivity activity, ViewMode viewMode) {
         super(activity, viewMode);
-        // TODO Auto-generated constructor stub
     }
 
     @Override

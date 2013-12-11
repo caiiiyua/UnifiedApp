@@ -3,6 +3,7 @@ package org.caiiiyua.unifiedapp.ui;
 import java.util.Deque;
 import java.util.LinkedList;
 
+import org.caiiiyua.unifiedapp.ui.view.ContentPagerController;
 import org.caiiiyua.unifiedapp.utils.LogTag;
 import org.caiiiyua.unifiedapp.utils.Utils;
 
@@ -50,6 +51,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
     private final Deque<UpOrBackHandler> mUpOrBackHandlers = 
             new LinkedList<UpOrBackController.UpOrBackHandler>();
+    protected ContentPagerController mContentPagerController;
 
     public AbstractActivityController(MainActivity activity, ViewMode viewMode) {
         mActivity = activity;
@@ -62,6 +64,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
         final Resources r = mContext.getResources();
         mIsTablet = Utils.useTabletUI(r);
+//        mContentPagerController = new ContentPagerController(mFragmentManager, mActivity);
     }
 
 }
