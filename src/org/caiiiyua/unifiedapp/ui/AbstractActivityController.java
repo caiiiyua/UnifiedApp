@@ -438,28 +438,30 @@ public abstract class AbstractActivityController implements ActivityController {
         mLoaderManager.initLoader(LOADER_VOLUME_LIST, null, mVolumeLoads);
     }
 
-    private class VolumeLoads implements LoaderCallbacks<ObjectCursor<Volume>> {
+    private class VolumeLoads implements LoaderCallbacks<Cursor> {
 
-        private CursorCreator<Volume> mFactory = Volume.FACTORY;
         @Override
-        public Loader<ObjectCursor<Volume>> onCreateLoader(int id, Bundle args) {
-            return new VolumeLoader(mContext, Uri.parse(UIProvider.VOLUME_BASE_URI),
-                    UIProvider.VOLUME_PROJECTION, mFactory);
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            // TODO Auto-generated method stub
+            return new VolumeListLoader(mContext, System.currentTimeMillis());
         }
 
         @Override
-        public void onLoadFinished(Loader<ObjectCursor<Volume>> loader,
-                ObjectCursor<Volume> data) {
-            if (data == null) {
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            Cursor volumesCursor = data;
+            if (volumesCursor == null) {
                 return;
             }
+            // mAdapter.swipCursor(volumesCursor);
         }
 
         @Override
-        public void onLoaderReset(Loader<ObjectCursor<Volume>> loader) {
-            // TODO Auto-generated method stub
-            
+        public void onLoaderReset(Loader<Cursor> loader) {
+            if (mVolumeListCursor != null && !mVolumeListCursor.isClosed()) {
+                mVolumeListCursor.close();
+            }
+            mVolumeListCursor = null;
         }
-        
+
     }
 }
