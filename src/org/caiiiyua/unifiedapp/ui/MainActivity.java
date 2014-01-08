@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements ControllableActivity {
     private ViewMode mViewMode;
     private ActivityController mController;
     private FragmentManager mFragmentManager;
-    private ContentPagerController mContentPagerController;
+//    private ContentPagerController mContentPagerController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,53 +32,48 @@ public class MainActivity extends Activity implements ControllableActivity {
         mController = ControllerFactory.forActivity(this, mViewMode, tabletUi);
         mController.onCreate(savedInstanceState);
         mFragmentManager = getFragmentManager();
-        mContentPagerController = new ContentPagerController(mFragmentManager, this);
-        final ListFragment contentListFragment = new ContentListFragment(mContentPagerController);
-        replaceFragment(contentListFragment, FragmentTransaction.TRANSIT_FRAGMENT_OPEN,
-                TAG_CONTENT_LIST, R.id.content_pane);
     }
 
-    /**
-     * Replace the content_pane with the fragment specified here. The tag is specified so that
-     * the {@link ActivityController} can look up the fragments through the
-     * {@link android.app.FragmentManager}.
-     * @param fragment the new fragment to put
-     * @param transition the transition to show
-     * @param tag a tag for the fragment manager.
-     * @param anchor ID of view to replace fragment in
-     * @return transaction ID returned when the transition is committed.
-     */
-    private int replaceFragment(Fragment fragment, int transition, String tag, int anchor) {
-        final FragmentManager fm = mFragmentManager;
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.setTransition(transition);
-        fragmentTransaction.replace(anchor, fragment, tag);
-        final int id = fragmentTransaction.commitAllowingStateLoss();
-        fm.executePendingTransactions();
-        return id;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mController.onResume();
     }
 
-    public ContentPagerController getContentPagerController() {
-        return mContentPagerController;
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mController.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mController.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mController.onDestroy();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        mController.onCreateOptionsMenu(menu);
         return true;
     }
 
     @Override
     public String getHelpContext() {
-        // TODO Auto-generated method stub
-        return null;
+        return mController.getHelpContext();
     }
 
     @Override
     public ViewMode getViewMode() {
-        // TODO Auto-generated method stub
-        return null;
+        return mViewMode;
     }
 
     @Override
@@ -96,19 +91,17 @@ public class MainActivity extends Activity implements ControllableActivity {
     @Override
     public UpOrBackController getUpOrBackController() {
         // TODO Auto-generated method stub
-        return null;
+        return mController;
     }
 
     @Override
     public void startDragMode() {
-        // TODO Auto-generated method stub
-        
+        mController.startDragMode();
     }
 
     @Override
     public void stopDragMode() {
-        // TODO Auto-generated method stub
-        
+        mController.stopDragMode();
     }
 
     @Override
@@ -125,7 +118,14 @@ public class MainActivity extends Activity implements ControllableActivity {
 
     @Override
     public Context getActivityContext() {
+        return this;
+    }
+
+    @Override
+    public void onBackPressed() {
         // TODO Auto-generated method stub
-        return null;
+        if (!mController.onBackPressed()) {
+            super.onBackPressed();
+        }
     }
 }

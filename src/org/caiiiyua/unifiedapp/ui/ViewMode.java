@@ -43,6 +43,20 @@ public class ViewMode {
     }
 
     /**
+     * Mode when showing a single content.
+     */
+    public static final int CONTENT_VIEW = 1;
+    /**
+     * Mode when showing a list of content
+     */
+    public static final int CONTENT_LIST = 2;
+
+    /**
+     * Mode when showing a list of volume
+     */
+    public static final int VOL_LIST = 3;
+
+    /**
      * Mode when showing ads.
      */
     public static final int AD = 6;
@@ -125,6 +139,37 @@ public class ViewMode {
         return mode == AD;
     }
 
+    public boolean isVolumeListMode() {
+        return isVolumeListMode(mMode);
+    }
+
+    public boolean isContentListMode() {
+        return isContentListMode(mMode);
+    }
+
+    public boolean isContentViewMode() {
+        return isContentViewMode(mMode);
+    }
+
+    public static boolean isVolumeListMode(final int mode) {
+        return mode == VOL_LIST;
+    }
+
+    public static boolean isContentListMode(final int mode) {
+        return mode == CONTENT_LIST;
+    }
+
+    public static boolean isContentViewMode(final int mode) {
+        return mode == CONTENT_VIEW;
+    }
+
+    public boolean isUnknownMode() {
+        return isUnknownMode(mMode);
+    }
+
+    public static boolean isUnknownMode(final int mode) {
+        return mode == UNKNOWN;
+    }
     /**
      * Restoring from a saved state restores only the mode. It does not restore the listeners of
      * this object.
@@ -186,5 +231,29 @@ public class ViewMode {
         dispatchModeChange();
 //        Analytics.getInstance().sendView("ViewMode" + toString());
         return true;
+    }
+
+    /**
+     * Requests a transition of the mode to show the conversation list as the prominent view.
+     *
+     */
+    public void enterContentListMode() {
+        setModeInternal(CONTENT_LIST);
+    }
+
+    /**
+     * Requests a transition of the mode to show a conversation as the prominent view.
+     *
+     */
+    public void enterContentViewMode() {
+        setModeInternal(CONTENT_VIEW);
+    }
+
+    /**
+     * Requests a transition of the mode to show a conversation as the prominent view.
+     *
+     */
+    public void enterVolumeListMode() {
+        setModeInternal(VOL_LIST);
     }
 }

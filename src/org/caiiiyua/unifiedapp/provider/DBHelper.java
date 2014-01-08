@@ -10,21 +10,21 @@ import android.database.sqlite.SQLiteOpenHelper;
 public final class DBHelper {
 
     public static final int DATABASE_VERSION = 1;
-    public DatabaseFactory mDatabaseFactory;
+    public static DatabaseFactory sDatabaseFactory;
 
     public void setDatabaseFactory(DatabaseFactory dbf) {
-        mDatabaseFactory = dbf;
+        sDatabaseFactory = dbf;
     }
 
     public DatabaseFactory getDatabaseFactory() {
-        return mDatabaseFactory;
+        return sDatabaseFactory;
     }
 
-    protected final class DatabaseHelper extends SQLiteOpenHelper {
+    protected static class DatabaseHelper extends SQLiteOpenHelper {
         Context mContext;
 
-        public DatabaseHelper(Context context, String name) {
-            super(context, name, null, DATABASE_VERSION);
+        public DatabaseHelper(Context context) {
+            super(context, DBContent.DATABASE_NAME, null, DATABASE_VERSION);
             mContext = context;
         }
 
@@ -41,24 +41,24 @@ public final class DBHelper {
 
         public void createTable(SQLiteDatabase db) {
 
-            if (mDatabaseFactory == null) {
+            if (sDatabaseFactory == null) {
                 return;
             }
-            String tableName = mDatabaseFactory.getTableName();
-            String tableColmns = mDatabaseFactory.toString();
+            String tableName = sDatabaseFactory.getTableName();
+            String tableColmns = sDatabaseFactory.getIndexColumns();
             String createString = "(" + DBContent.RECORD_ID + "integer primary key autoincrement, "
-                    + tableColmns;
+                    + tableColmns + " )";
             String altCreateString = "(" + DBContent.RECORD_ID + "integer unique, "
-                    + tableColmns;
+                    + tableColmns + " )";
             // The table is created with schema here
             db.execSQL("create table " + tableName + createString);
 
-            String indexColumns[] = mDatabaseFactory.getIndexColumns();
-            if (indexColumns.length > 0) {
-                for (String columnName : indexColumns) {
-                    db.execSQL(createIndex(tableName, columnName));
-                }
-            }
+//            String indexColumns[] = sDatabaseFactory.getIndexColumns();
+//            if (indexColumns.length > 0) {
+//                for (String columnName : indexColumns) {
+//                    db.execSQL(createIndex(tableName, columnName));
+//                }
+//            }
         }
 
         // Create a table from Database factory
@@ -67,20 +67,20 @@ public final class DBHelper {
                 return;
             }
             String tableName = dbFactory.getTableName();
-            String tableColmns = dbFactory.toString();
+            String tableColmns = dbFactory.getIndexColumns();
             String createString = "(" + DBContent.RECORD_ID + "integer primary key autoincrement, "
-                    + tableColmns;
+                    + tableColmns + " )";
             String altCreateString = "(" + DBContent.RECORD_ID + "integer unique, "
-                    + tableColmns;
+                    + tableColmns + " )";
             // The table is created with schema here
             db.execSQL("create table " + tableName + createString);
 
-            String indexColumns[] = dbFactory.getIndexColumns();
-            if (indexColumns.length > 0) {
-                for (String columnName : indexColumns) {
-                    db.execSQL(createIndex(tableName, columnName));
-                }
-            }
+//            String indexColumns = dbFactory.getIndexColumns();
+//            if (indexColumns.length > 0) {
+//                for (String columnName : indexColumns) {
+//                    db.execSQL(createIndex(tableName, columnName));
+//                }
+//            }
         }
 
         @Override
@@ -91,7 +91,7 @@ public final class DBHelper {
         
     }
 
-    public String createIndex(String tableName, String columnName) {
+    public static String createIndex(String tableName, String columnName) {
         /*
          * Internal helper method for index creation.
          * Example:

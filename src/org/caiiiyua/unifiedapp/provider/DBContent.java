@@ -2,6 +2,7 @@ package org.caiiiyua.unifiedapp.provider;
 
 public abstract class DBContent {
 
+    public static final String DATABASE_NAME = "LuooProvider.db";
     public static final String RECORD_ID = "_id";
     public static final String[] COUNT_COLUMNS = new String[]{"count(*)"};
 

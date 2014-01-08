@@ -16,7 +16,7 @@ import android.view.MotionEvent;
 
 public interface ActivityController extends ModeChangeListener, HelpCallback,
                 ErrorListener, UpOrBackController, FragmentLauncher,
-                ConnectivityStateChangeListener {
+                ConnectivityStateChangeListener, VolumeListCallbacks {
 
     /**
      * @see android.app.Activity#onActivityResult

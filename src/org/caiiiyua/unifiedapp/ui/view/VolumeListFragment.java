@@ -3,8 +3,11 @@ package org.caiiiyua.unifiedapp.ui.view;
 import org.caiiiyua.unifiedapp.R;
 import org.caiiiyua.unifiedapp.ui.AbstractActivityController;
 import org.caiiiyua.unifiedapp.ui.ControllableActivity;
+import org.caiiiyua.unifiedapp.ui.VolumeListCallbacks;
 
+import android.app.Activity;
 import android.app.ListFragment;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,50 +17,65 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-public class ContentListFragment extends ListFragment {
+public class VolumeListFragment extends ListFragment {
 
     public static String texts[] = {
-        "Beijing",
-        "Shanghai",
-        "Nanjing",
-        "Tianjing",
-        "Chengdu",
-        "LanZhou",
-        "Kunming",
-        "Shenyang",
-        "Hefei",
-        "Hangzhou",
-        "Baiying",
-        "Lasa",
-        "Guilin"
+        "Vol01",
+        "Vol02",
+        "Vol03",
+        "Vol04",    
+        "Vol05",
+        "Vol06",
+        "Vol07",
+        "Vol08",
+        "Vol09",
+        "Vol10",
+        "Vol11",
+        "Vol12",
+        "Vol13"
     };
 //    private ContentListView mContentListView;
-    private ListView mContentListView;
     private ControllableActivity mActivity;
     private AbstractActivityController mController;
+    private ListView mVolumeList;
+    private VolumeListAdapter mListAdpater;
+    private VolumeListCallbacks mCallbacks;
 
-    public ContentListFragment(AbstractActivityController controller) {
+    public static VolumeListFragment newInstance(AbstractActivityController controller) {
+        VolumeListFragment volumeListFragment = new VolumeListFragment(controller);
+        return volumeListFragment;
+    }
+
+    public VolumeListFragment(AbstractActivityController controller) {
         mController = controller;
+    }
+
+    private Cursor getVolumeListCursor() {
+        return mCallbacks != null ? mCallbacks.getVolumeListCursor() : null;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.content_list, null);
-//        mContentListView = (ListView)rootView.findViewById(R.id.content_list);
+        View rootView = inflater.inflate(R.layout.unified_list, null);
+        mVolumeList = (ListView) rootView.findViewById(R.id.list_container);
         return rootView;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setListAdapter(new ArrayAdapter<String>(getActivity()
-                , android.R.layout.simple_list_item_1, texts));
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mCallbacks = mController;
+        Activity activity = getActivity();
+        mActivity = (ControllableActivity) activity;
+        mListAdpater = new VolumeListAdapter(getActivity(), activity,
+                mVolumeList, getVolumeListCursor());
+        mVolumeList.setAdapter(mListAdpater);
     }
 
     @Override
