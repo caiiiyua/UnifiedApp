@@ -1,9 +1,13 @@
 package org.caiiiyua.unifiedapp.ui;
 
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
 
 import org.caiiiyua.unifiedapp.R;
+import org.caiiiyua.unifiedapp.content.CursorCreator;
+import org.caiiiyua.unifiedapp.content.ObjectCursor;
+import org.caiiiyua.unifiedapp.musicplayer.Volume;
 import org.caiiiyua.unifiedapp.ui.view.ContentListFragment;
 import org.caiiiyua.unifiedapp.ui.view.ContentPagerController;
 import org.caiiiyua.unifiedapp.ui.view.VolumeListFragment;
@@ -17,16 +21,19 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ListFragment;
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +76,11 @@ public abstract class AbstractActivityController implements ActivityController {
     private static final String TAG_CONTENT_LIST = "tag-content-list";
     private static final String TAG_CONTENT_VIEW = "tag-content-view";
 
+    // Loaders of Volumes, Tracks and others
+    public static final int LOADER_VOLUME_LIST = 0;
+    public static final int LOADER_TRACK_LIST = 1;
+
+    private VolumeLoads mVolumeLoads = new VolumeLoads();
     private boolean mIsDragHappening;
 
     private final Deque<UpOrBackHandler> mUpOrBackHandlers = 
@@ -76,10 +88,15 @@ public abstract class AbstractActivityController implements ActivityController {
     protected ContentPagerController mContentPagerController;
     private View mListView;
     private Cursor mVolumeListCursor;
+    private LoaderManager mLoaderManager;
+
+    // cache current list of lastest volumes
+    private ArrayList<Volume> mVolumeList = new ArrayList<Volume>();
 
     public AbstractActivityController(ControllableActivity activity, ViewMode viewMode) {
         mActivity = activity;
         mFragmentManager = mActivity.getFragmentManager();
+        mLoaderManager = mActivity.getLoaderManager();
         mViewMode = viewMode;
         mContext = activity.getApplicationContext();
         // Allow the fragment to observe changes to its own selection set. No other object is
@@ -185,6 +202,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onCreate(Bundle savedState) {
+        initVolumeList();
         if (savedState == null) {
             LogUtils.d(LogUtils.TAG, "AbstractActivityController onCreate");
             // Launch volume list by default
@@ -414,5 +432,34 @@ public abstract class AbstractActivityController implements ActivityController {
         } else {
             mListView.setVisibility(View.INVISIBLE);
         }
+    }
+
+    private void initVolumeList() {
+        mLoaderManager.initLoader(LOADER_VOLUME_LIST, null, mVolumeLoads);
+    }
+
+    private class VolumeLoads implements LoaderCallbacks<ObjectCursor<Volume>> {
+
+        private CursorCreator<Volume> mFactory = Volume.FACTORY;
+        @Override
+        public Loader<ObjectCursor<Volume>> onCreateLoader(int id, Bundle args) {
+            return new VolumeLoader(mContext, Uri.parse(UIProvider.VOLUME_BASE_URI),
+                    UIProvider.VOLUME_PROJECTION, mFactory);
+        }
+
+        @Override
+        public void onLoadFinished(Loader<ObjectCursor<Volume>> loader,
+                ObjectCursor<Volume> data) {
+            if (data == null) {
+                return;
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<ObjectCursor<Volume>> loader) {
+            // TODO Auto-generated method stub
+            
+        }
+        
     }
 }

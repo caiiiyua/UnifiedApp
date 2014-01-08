@@ -4,6 +4,10 @@ import android.provider.BaseColumns;
 
 public class UIProvider {
 
+    public static final String AUTHORITY = "org.caiiiyua.unifiedapp.provider";
+
+    public static final String VOLUME_BASE_URI = AUTHORITY + "/volume";
+
     public static final class VolumeColumns implements BaseColumns {
         /**
          * This string column contains the human readable of Volume number
