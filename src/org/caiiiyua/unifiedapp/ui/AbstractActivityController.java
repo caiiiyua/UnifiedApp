@@ -11,6 +11,7 @@ import org.caiiiyua.unifiedapp.musicplayer.Volume;
 import org.caiiiyua.unifiedapp.ui.view.ContentListFragment;
 import org.caiiiyua.unifiedapp.ui.view.ContentPagerController;
 import org.caiiiyua.unifiedapp.ui.view.VolumeListFragment;
+import org.caiiiyua.unifiedapp.ui.view.VolumesUpdateListener;
 import org.caiiiyua.unifiedapp.utils.LogTag;
 import org.caiiiyua.unifiedapp.utils.LogUtils;
 import org.caiiiyua.unifiedapp.utils.Utils;
@@ -92,6 +93,8 @@ public abstract class AbstractActivityController implements ActivityController {
 
     // cache current list of lastest volumes
     private ArrayList<Volume> mVolumeList = new ArrayList<Volume>();
+    private ArrayList<VolumesUpdateListener> mVolumesUpdateListeners
+                                  = new ArrayList<VolumesUpdateListener>();
 
     public AbstractActivityController(ControllableActivity activity, ViewMode viewMode) {
         mActivity = activity;
@@ -323,7 +326,6 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public Cursor getVolumeListCursor() {
-        // TODO Auto-generated method stub
         return mVolumeListCursor;
     }
 
@@ -426,6 +428,18 @@ public abstract class AbstractActivityController implements ActivityController {
         return mUpOrBackHandlers;
     }
 
+    public void registerVolumesUpdateListener(VolumesUpdateListener listener) {
+        if (!mVolumesUpdateListeners.contains(listener)) {
+            mVolumesUpdateListeners.add(listener);
+        }
+    }
+
+    public void removeVolumesUpdateListener(VolumesUpdateListener listener) {
+        if (!mVolumesUpdateListeners.contains(listener)) {
+            mVolumesUpdateListeners.remove(listener);
+        }
+    }
+
     public void showListView(boolean show) {
         if (show) {
             mListView.setVisibility(View.VISIBLE);
@@ -442,7 +456,6 @@ public abstract class AbstractActivityController implements ActivityController {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-            // TODO Auto-generated method stub
             return new VolumeListLoader(mContext, System.currentTimeMillis());
         }
 
@@ -452,7 +465,7 @@ public abstract class AbstractActivityController implements ActivityController {
             if (volumesCursor == null) {
                 return;
             }
-            // mAdapter.swipCursor(volumesCursor);
+            mVolumeListCursor = volumesCursor;
         }
 
         @Override

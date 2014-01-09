@@ -17,7 +17,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-public class VolumeListFragment extends ListFragment {
+public class VolumeListFragment extends ListFragment implements VolumesUpdateListener {
 
     public static String texts[] = {
         "Vol01",
@@ -71,6 +71,7 @@ public class VolumeListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mCallbacks = mController;
+        mController.registerVolumesUpdateListener(this);
         Activity activity = getActivity();
         mActivity = (ControllableActivity) activity;
         mListAdpater = new VolumeListAdapter(getActivity(), activity,
@@ -83,5 +84,20 @@ public class VolumeListFragment extends ListFragment {
         String toastString = "You have clicked " + position + " item";
         Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
         mController.launchFragment(this, position);
+    }
+
+    @Override
+    public void onVolumesUpdated(Cursor cursor) {
+        if (cursor == null || cursor.isClosed()) {
+            return;
+        }
+        mListAdpater.swapCursor(cursor);
+        mListAdpater.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mController.removeVolumesUpdateListener(this);
     }
 }
