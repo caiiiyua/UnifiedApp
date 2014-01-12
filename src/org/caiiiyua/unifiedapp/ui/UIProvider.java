@@ -4,9 +4,10 @@ import android.provider.BaseColumns;
 
 public class UIProvider {
 
+    public static final String CONTENT_PREFIX = "content://";
     public static final String AUTHORITY = "org.caiiiyua.unifiedapp.provider";
 
-    public static final String VOLUME_BASE_URI = AUTHORITY + "/volume";
+    public static final String VOLUME_BASE_URI = CONTENT_PREFIX + AUTHORITY + "/volumes";
 
     public static final class VolumeColumns implements BaseColumns {
         /**

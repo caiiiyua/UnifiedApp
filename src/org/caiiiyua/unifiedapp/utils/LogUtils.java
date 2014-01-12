@@ -162,10 +162,11 @@ public class LogUtils {
      * Checks to see whether or not a log for the specified tag is loggable at the specified level.
      */
     public static boolean isLoggable(String tag, int level) {
-        if (MAX_ENABLED_LOG_LEVEL > level) {
-            return false;
-        }
-        return Log.isLoggable(tag, level) || Log.isLoggable(TAG, level);
+        return true;
+//        if (MAX_ENABLED_LOG_LEVEL > level) {
+//            return false;
+//        }
+//        return Log.isLoggable(tag, level) || Log.isLoggable(TAG, level);
     }
 
     /**

@@ -1,5 +1,8 @@
 package org.caiiiyua.unifiedapp.service;
 
+import org.caiiiyua.unifiedapp.musicplayer.Volume;
+import org.caiiiyua.unifiedapp.utils.LogUtils;
+
 import android.accounts.Account;
 import android.app.Service;
 import android.content.AbstractThreadedSyncAdapter;
@@ -24,10 +27,18 @@ public class UnifiedAppSyncAdpaterService extends Service {
         public void onPerformSync(Account account, Bundle extras,
                 String authority, ContentProviderClient provider,
                 SyncResult syncResult) {
-            // TODO Auto-generated method stub
-            
+            LogUtils.d(LogUtils.TAG, "onPerformSync for authority: " + authority);
+            final String URL_TEST = "http://www.luoo.net/";
+            generateDataFromServer(getContext(), URL_TEST);
         }
+
         
+    }
+
+    private static void generateDataFromServer(Context context, String url) {
+        Volume volume = new Volume(url);
+        volume.initializeMetaInfo();
+        volume.insert(context);
     }
 
     private UnifiedAppSyncAdpaterImpl mSyncAdapterImpl = null;

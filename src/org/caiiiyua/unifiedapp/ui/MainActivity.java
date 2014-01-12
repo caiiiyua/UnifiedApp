@@ -3,6 +3,7 @@ package org.caiiiyua.unifiedapp.ui;
 import org.caiiiyua.unifiedapp.R;
 import org.caiiiyua.unifiedapp.ui.view.ContentListFragment;
 import org.caiiiyua.unifiedapp.ui.view.ContentPagerController;
+import org.caiiiyua.unifiedapp.utils.LogUtils;
 import org.caiiiyua.unifiedapp.utils.UnifiedConnectivityManager;
 import org.caiiiyua.unifiedapp.utils.Utils;
 
@@ -27,6 +28,7 @@ public class MainActivity extends Activity implements ControllableActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        LogUtils.d(LogUtils.TAG, "MainActivity onCreate");
         mViewMode = new ViewMode();
         final boolean tabletUi = Utils.useTabletUI(this.getResources());
         mController = ControllerFactory.forActivity(this, mViewMode, tabletUi);

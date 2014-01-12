@@ -47,6 +47,27 @@
             android:name=".provider.UnifiedContentProvider" 
             android:authorities="org.caiiiyua.unifiedapp.provider">
         </provider>
+
+        <!--Required stanza to register the UnifiedAppSyncAdpaterService with SyncManager -->
+        <service
+            android:name="org.caiiiyua.unifiedapp.service.UnifiedAppSyncAdpaterService"
+            android:exported="true">
+            <intent-filter>
+                <action
+                    android:name="android.content.SyncAdapter" />
+            </intent-filter>
+            <meta-data android:name="android.content.SyncAdapter"
+                       android:resource="@xml/syncadapter_unified" />
+        </service>
+        <service
+            android:name="org.caiiiyua.unifiedapp.service.SyncAdapterAuthticatorService">
+        <intent-filter>
+            <action android:name="android.accounts.AccountAuthenticator"/>
+        </intent-filter>
+        <meta-data
+            android:name="android.accounts.AccountAuthenticator"
+            android:resource="@xml/authenticator_luoo" />
+    </service>
     </application>
 
 </manifest>

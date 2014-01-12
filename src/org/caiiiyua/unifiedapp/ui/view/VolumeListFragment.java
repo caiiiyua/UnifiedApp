@@ -4,20 +4,23 @@ import org.caiiiyua.unifiedapp.R;
 import org.caiiiyua.unifiedapp.ui.AbstractActivityController;
 import org.caiiiyua.unifiedapp.ui.ControllableActivity;
 import org.caiiiyua.unifiedapp.ui.VolumeListCallbacks;
+import org.caiiiyua.unifiedapp.utils.LogUtils;
 
 import android.app.Activity;
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
 
-public class VolumeListFragment extends ListFragment implements VolumesUpdateListener {
+public class VolumeListFragment extends Fragment implements VolumesUpdateListener,
+            OnItemClickListener {
 
     public static String texts[] = {
         "Vol01",
@@ -59,16 +62,19 @@ public class VolumeListFragment extends ListFragment implements VolumesUpdateLis
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.unified_list, null);
         mVolumeList = (ListView) rootView.findViewById(R.id.list_container);
+        LogUtils.d(LogUtils.TAG, "VolumeListFragment onCreateView");
         return rootView;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LogUtils.d(LogUtils.TAG, "VolumeListFragment onCreate");
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        LogUtils.d(LogUtils.TAG, "VolumeListFragment onActivityCreated");
         super.onActivityCreated(savedInstanceState);
         mCallbacks = mController;
         mController.registerVolumesUpdateListener(this);
@@ -77,13 +83,7 @@ public class VolumeListFragment extends ListFragment implements VolumesUpdateLis
         mListAdpater = new VolumeListAdapter(getActivity(), activity,
                 mVolumeList, getVolumeListCursor());
         mVolumeList.setAdapter(mListAdpater);
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        String toastString = "You have clicked " + position + " item";
-        Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
-        mController.launchFragment(this, position);
+        mVolumeList.setOnItemClickListener(this);
     }
 
     @Override
@@ -91,6 +91,7 @@ public class VolumeListFragment extends ListFragment implements VolumesUpdateLis
         if (cursor == null || cursor.isClosed()) {
             return;
         }
+        LogUtils.d(LogUtils.TAG, "VolumeListFragment onVolumesUpdated");
         mListAdpater.swapCursor(cursor);
         mListAdpater.notifyDataSetChanged();
     }
@@ -99,5 +100,13 @@ public class VolumeListFragment extends ListFragment implements VolumesUpdateLis
     public void onStop() {
         super.onStop();
         mController.removeVolumesUpdateListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position,
+            long id) {
+        String toastString = "You have clicked " + position + " item with id: " + id;
+        Toast.makeText(getActivity(), toastString, Toast.LENGTH_SHORT).show();
+        mController.launchFragment(this, position);
     }
 }

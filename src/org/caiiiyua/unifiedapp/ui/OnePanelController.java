@@ -3,6 +3,7 @@ package org.caiiiyua.unifiedapp.ui;
 import org.caiiiyua.unifiedapp.R;
 import org.caiiiyua.unifiedapp.ui.view.ContentListFragment;
 import org.caiiiyua.unifiedapp.ui.view.ContentPagerController;
+import org.caiiiyua.unifiedapp.utils.LogUtils;
 
 import android.app.Dialog;
 import android.app.Fragment;
@@ -24,6 +25,7 @@ public class OnePanelController extends AbstractActivityController implements
     MainActivity mActivity;
     public OnePanelController(MainActivity activity, ViewMode viewMode) {
         super(activity, viewMode);
+        LogUtils.d(LogUtils.TAG, "OnePanelController construct");
         mActivity = activity;
     }
 

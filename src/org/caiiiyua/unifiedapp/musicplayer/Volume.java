@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.caiiiyua.unifiedapp.content.CursorCreator;
+import org.caiiiyua.unifiedapp.provider.UnifiedContentProvider.Volumes;
 import org.caiiiyua.unifiedapp.ui.UIProvider;
+import org.caiiiyua.unifiedapp.utils.LogUtils;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -73,6 +77,19 @@ public class Volume {
         return true;
     }
 
+    public ContentValues toContentValues() {
+        ContentValues values = new ContentValues();
+
+        values.put(UIProvider.VolumeColumns.VOL_NUM, mVolId);
+        values.put(UIProvider.VolumeColumns.VOL_TOPIC, mTopic);
+        values.put(UIProvider.VolumeColumns.VOL_DESCRIPTION, mDescription);
+        values.put(UIProvider.VolumeColumns.MUSIC_LIST_KEY, mMusicList.toString());
+        values.put(UIProvider.VolumeColumns.COVER_URI, mCoverUri.toString());
+        values.put(UIProvider.VolumeColumns.VOL_URL, mUrlString);
+
+        return values;
+    }
+
     public Uri getTrackUri(long trackId) {
         Log.d(LuooConstantUtils.TAG, "getTrackUri with id:" + trackId);
         if (mMusicList == null) return null;
@@ -99,4 +116,9 @@ public class Volume {
             return new Volume(c);
         }
     };
+
+    public void insert(Context context) {
+        LogUtils.d(LogUtils.TAG, "insert a Volume: %s", toString());
+        context.getContentResolver().insert(Volumes.CONTENT_URI, toContentValues());
+    }
 }

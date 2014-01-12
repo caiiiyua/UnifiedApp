@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import org.caiiiyua.unifiedapp.R;
 import org.caiiiyua.unifiedapp.content.CursorCreator;
 import org.caiiiyua.unifiedapp.content.ObjectCursor;
+import org.caiiiyua.unifiedapp.content.SyncAdapterController;
 import org.caiiiyua.unifiedapp.musicplayer.Volume;
 import org.caiiiyua.unifiedapp.ui.view.ContentListFragment;
 import org.caiiiyua.unifiedapp.ui.view.ContentPagerController;
@@ -28,6 +29,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SyncAdapterType;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -37,6 +39,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -90,6 +93,7 @@ public abstract class AbstractActivityController implements ActivityController {
     private View mListView;
     private Cursor mVolumeListCursor;
     private LoaderManager mLoaderManager;
+    private SyncAdapterController mSyncAdapterController;
 
     // cache current list of lastest volumes
     private ArrayList<Volume> mVolumeList = new ArrayList<Volume>();
@@ -102,6 +106,7 @@ public abstract class AbstractActivityController implements ActivityController {
         mLoaderManager = mActivity.getLoaderManager();
         mViewMode = viewMode;
         mContext = activity.getApplicationContext();
+        mSyncAdapterController = new SyncAdapterController(mContext);
         // Allow the fragment to observe changes to its own selection set. No other object is
         // aware of the selected set.
 //        mSelectedSet.addObserver(this);
@@ -205,11 +210,12 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onCreate(Bundle savedState) {
+        LogUtils.d(LogUtils.TAG, "AbstractActivityController onCreate");
         initVolumeList();
         if (savedState == null) {
-            LogUtils.d(LogUtils.TAG, "AbstractActivityController onCreate");
             // Launch volume list by default
-            final ListFragment contentListFragment = VolumeListFragment.newInstance(this);
+            final VolumeListFragment contentListFragment = VolumeListFragment.newInstance(this);
+//            final ContentListFragment  contentListFragment = new ContentListFragment(this);
             replaceFragment(contentListFragment, FragmentTransaction.TRANSIT_FRAGMENT_OPEN,
                     TAG_VOL_LIST, R.id.content_pane);
         }
@@ -276,8 +282,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
@@ -312,8 +317,8 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
-        return false;
+        mActivity.getActionBar().show();
+        return true;
     }
 
     @Override
@@ -440,7 +445,14 @@ public abstract class AbstractActivityController implements ActivityController {
         }
     }
 
+    private void updateVolumeList() {
+        for (VolumesUpdateListener listener : mVolumesUpdateListeners) {
+            listener.onVolumesUpdated(mVolumeListCursor);
+        }
+    }
+
     public void showListView(boolean show) {
+        LogUtils.d(LogUtils.TAG, "%s listview", show ? "show" : "hide");
         if (show) {
             mListView.setVisibility(View.VISIBLE);
         } else {
@@ -449,23 +461,28 @@ public abstract class AbstractActivityController implements ActivityController {
     }
 
     private void initVolumeList() {
-        mLoaderManager.initLoader(LOADER_VOLUME_LIST, null, mVolumeLoads);
+        LogUtils.d(LogUtils.TAG, "initVolumeListLoader");
+        Loader<Cursor> loader = mLoaderManager.initLoader(LOADER_VOLUME_LIST, null, mVolumeLoads);
     }
 
     private class VolumeLoads implements LoaderCallbacks<Cursor> {
 
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            LogUtils.d(LogUtils.TAG, "VolumeLoads onCreateLoader");
             return new VolumeListLoader(mContext, System.currentTimeMillis());
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             Cursor volumesCursor = data;
-            if (volumesCursor == null) {
+            if (volumesCursor == null || volumesCursor.getCount() == 0) {
+                LogUtils.d(LOG_TAG, "onLoadFinished with empty result, get ready to sync");
+                mSyncAdapterController.requestSync();
                 return;
             }
             mVolumeListCursor = volumesCursor;
+            updateVolumeList();
         }
 
         @Override

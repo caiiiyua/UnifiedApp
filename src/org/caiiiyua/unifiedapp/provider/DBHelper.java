@@ -1,6 +1,7 @@
 package org.caiiiyua.unifiedapp.provider;
 
 
+import org.caiiiyua.unifiedapp.provider.UnifiedContentProvider.Volumes;
 import org.caiiiyua.unifiedapp.utils.LogUtils;
 
 import android.content.Context;
@@ -35,7 +36,7 @@ public final class DBHelper {
             if (db == null) {
                 return;
             }
-            createTable(db);
+            createTable(db, new Volumes());
             
         }
 
@@ -46,7 +47,7 @@ public final class DBHelper {
             }
             String tableName = sDatabaseFactory.getTableName();
             String tableColmns = sDatabaseFactory.getIndexColumns();
-            String createString = "(" + DBContent.RECORD_ID + "integer primary key autoincrement, "
+            String createString = " (" + DBContent.RECORD_ID + " integer primary key autoincrement, "
                     + tableColmns + " )";
             String altCreateString = "(" + DBContent.RECORD_ID + "integer unique, "
                     + tableColmns + " )";
@@ -68,7 +69,7 @@ public final class DBHelper {
             }
             String tableName = dbFactory.getTableName();
             String tableColmns = dbFactory.getIndexColumns();
-            String createString = "(" + DBContent.RECORD_ID + "integer primary key autoincrement, "
+            String createString = "(" + DBContent.RECORD_ID + " integer primary key autoincrement, "
                     + tableColmns + " )";
             String altCreateString = "(" + DBContent.RECORD_ID + "integer unique, "
                     + tableColmns + " )";

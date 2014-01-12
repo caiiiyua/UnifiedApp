@@ -41,14 +41,15 @@ public class UnifiedContentProvider extends ContentProvider {
         }
         mDbHelper = new DBHelper.DatabaseHelper(getContext());
         mDatabase = mDbHelper.getWritableDatabase();
-        mDbHelper.createTable(mDatabase, new Volumes());
+//        mDbHelper.createTable(mDatabase, new Volumes());
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
             String[] selectionArgs, String sortOrder) {
-        LogUtils.d(TAG, "Provider Query: %s", uri);
+        LogUtils.d(TAG, "Provider Query URI: %s, Projection: %s, Selection: %s, Order: %s",
+                uri, projection.toString(), selection, sortOrder);
         Cursor c = null;
         int match;
         try {
@@ -72,11 +73,16 @@ public class UnifiedContentProvider extends ContentProvider {
 
         switch (match) {
         case Volumes.VOLUMES_ID:
+            c = db.query(tableName, projection, selection, selectionArgs,
+                    null, null, sortOrder, "10");
             break;
         case Tracks.TRACKS_ID:
             c = db.query(tableName, Volumes.VOLUME_PROJECTION, null, null, null, null, null);
             break;
         case Volumes.VOLUMES:
+            LogUtils.d(LogUtils.TAG, "select * from %s where %s", tableName, selection);
+            c = db.query(tableName, projection, selection, selectionArgs,
+                    null, null, sortOrder, "10");
             break;
         case Tracks.TRACKS:
             break;
@@ -84,7 +90,7 @@ public class UnifiedContentProvider extends ContentProvider {
         default:
             break;
         }
-        return null;
+        return c;
     }
 
     @Override
@@ -95,7 +101,42 @@ public class UnifiedContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        // TODO Auto-generated method stub
+        LogUtils.d(TAG, "Provider Insert Uri: %s, values: %s", uri, values);
+        Cursor c = null;
+        int match;
+        try {
+            match = findMatch(uri, "insert");
+        } catch (IllegalArgumentException e) {
+            String uriString = uri.toString();
+            // If we were passed an illegal uri, see if it ends in /-1
+            // if so, and if substituting 0 for -1 results in a valid uri, return an empty cursor
+            if (uriString != null && uriString.endsWith("/-1")) {
+                uri = Uri.parse(uriString.substring(0, uriString.length() - 2) + "0");
+                match = findMatch(uri, "insert");
+                return null;
+            }
+            throw e;
+        }
+        Context context = getContext();
+        SQLiteDatabase db = mDatabase;
+        int table = match >> BASE_SHIFT;
+        String id;
+        String tableName = TABLE_NAMES.valueAt(table);
+
+        switch (match) {
+        case Volumes.VOLUMES_ID:
+            db.insert(tableName, null, values);
+            break;
+        case Tracks.TRACKS_ID:
+            break;
+        case Volumes.VOLUMES:
+            break;
+        case Tracks.TRACKS:
+            break;
+
+        default:
+            break;
+        }
         return null;
     }
 
@@ -131,6 +172,7 @@ public class UnifiedContentProvider extends ContentProvider {
 
         public static final String TABLE_NAME = "volumes";
         public static final String VOLUME_AUTHORITY = AUTHORITY + "/" + TABLE_NAME;
+        public static final Uri CONTENT_URI = Uri.parse("content://" + VOLUME_AUTHORITY);
 
         public static final int VOLUMES_BASE = 0x1;
         public static final int VOLUMES = VOLUMES_BASE;
