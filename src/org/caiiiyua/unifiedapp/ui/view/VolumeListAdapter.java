@@ -3,10 +3,14 @@ package org.caiiiyua.unifiedapp.ui.view;
 import org.caiiiyua.unifiedapp.R;
 import org.caiiiyua.unifiedapp.ui.ControllableActivity;
 import org.caiiiyua.unifiedapp.ui.UIProvider;
+import org.caiiiyua.unifiedapp.utils.LogUtils;
 
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +42,7 @@ public class VolumeListAdapter extends CursorAdapter {
     private View newVolumeCellView(Context context, ViewGroup parent) {
         ViewHolder viewHolder = new ViewHolder();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View cell = inflater.inflate(R.layout.volume_cell, parent);
+        View cell = inflater.inflate(R.layout.volume_cell, null);
         viewHolder.lableView = (TextView) cell.findViewById(R.id.vol_id_lable);
         viewHolder.descriptionView = (TextView) cell.findViewById(R.id.vol_description);
         viewHolder.coverView = (ImageView) cell.findViewById(R.id.cover);
@@ -76,6 +80,8 @@ public class VolumeListAdapter extends CursorAdapter {
         if (coverUri != null) {
             viewHolder.coverView.setImageURI(coverUri);
         }
+        LogUtils.d(LogUtils.TAG, "BindView with lable: %s, description: %s, cover: %s",
+                lable, description, coverUri);
     }
 
 }

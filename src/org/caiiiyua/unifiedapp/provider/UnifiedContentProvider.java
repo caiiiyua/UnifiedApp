@@ -81,8 +81,8 @@ public class UnifiedContentProvider extends ContentProvider {
             break;
         case Volumes.VOLUMES:
             LogUtils.d(LogUtils.TAG, "select * from %s where %s", tableName, selection);
-            c = db.query(tableName, projection, selection, selectionArgs,
-                    null, null, sortOrder, "10");
+            c = db.query(tableName, Volumes.VOLUME_PROJECTION, selection, selectionArgs,
+                    null, null, sortOrder, null);
             break;
         case Tracks.TRACKS:
             break;
@@ -125,11 +125,12 @@ public class UnifiedContentProvider extends ContentProvider {
 
         switch (match) {
         case Volumes.VOLUMES_ID:
-            db.insert(tableName, null, values);
             break;
         case Tracks.TRACKS_ID:
             break;
         case Volumes.VOLUMES:
+            long longId = db.insert(tableName, null, values);
+            LogUtils.d(LogUtils.TAG, "Insert in %s with _id: %d", tableName, longId);
             break;
         case Tracks.TRACKS:
             break;

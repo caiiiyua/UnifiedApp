@@ -39,7 +39,7 @@
     <ImageView
         android:id="@+id/cover"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="200dp"
         android:src="@drawable/cover"/>
     </LinearLayout>
 
@@ -47,16 +47,12 @@
         android:id="@+id/vol_description_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/text_bg_img"
         android:layout_below="@id/cover_container"
         android:gravity="center">
     <TextView 
         android:id="@+id/vol_description"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:lines="6"
-        android:text="Vol 400: hello"
-        />
+        android:layout_height="fill_parent"/>
     </LinearLayout>
 
 </RelativeLayout>
