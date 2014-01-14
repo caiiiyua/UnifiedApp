@@ -15,6 +15,7 @@ import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 
 public class MainActivity extends Activity implements ControllableActivity {
 
@@ -129,5 +130,11 @@ public class MainActivity extends Activity implements ControllableActivity {
         if (!mController.onBackPressed()) {
             super.onBackPressed();
         }
+    }
+ 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        return mController.onOptionsItemSelected(item);
     }
 }

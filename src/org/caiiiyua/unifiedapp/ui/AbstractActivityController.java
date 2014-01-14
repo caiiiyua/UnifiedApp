@@ -94,6 +94,7 @@ public abstract class AbstractActivityController implements ActivityController {
     private Cursor mVolumeListCursor;
     private LoaderManager mLoaderManager;
     private SyncAdapterController mSyncAdapterController;
+    private MenuItem mLoadMoreItem;
 
     // cache current list of lastest volumes
     private ArrayList<Volume> mVolumeList = new ArrayList<Volume>();
@@ -282,6 +283,7 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        mLoadMoreItem = menu.findItem(R.id.action_more);
         return true;
     }
 
@@ -293,7 +295,13 @@ public abstract class AbstractActivityController implements ActivityController {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO Auto-generated method stub
+        switch (item.getItemId()) {
+        case R.id.action_more:
+            mSyncAdapterController.requestSyncMore(getVolumeNum(false));
+            break;
+        default:
+            break;
+        }
         return false;
     }
 
@@ -460,6 +468,23 @@ public abstract class AbstractActivityController implements ActivityController {
         }
     }
 
+    public long getVolumeNum(boolean latest) {
+        long volumeNum = 0;
+        if (mVolumeListCursor == null) {
+            return volumeNum;
+        }
+        Volume volume;
+        if (latest) {
+            mVolumeListCursor.moveToFirst();
+        } else {
+            mVolumeListCursor.moveToLast();
+        }
+        volume = new Volume(mVolumeListCursor);
+        volumeNum = volume.getVolumeNum();
+        mVolumeListCursor.moveToPosition(-1);
+        return volumeNum;
+    }
+
     private void initVolumeList() {
         LogUtils.d(LogUtils.TAG, "initVolumeListLoader");
         Loader<Cursor> loader = mLoaderManager.initLoader(LOADER_VOLUME_LIST, null, mVolumeLoads);
@@ -477,8 +502,8 @@ public abstract class AbstractActivityController implements ActivityController {
         public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
             Cursor volumesCursor = data;
             if (volumesCursor == null || volumesCursor.getCount() == 0) {
-                LogUtils.d(LOG_TAG, "onLoadFinished with empty result, get ready to sync");
-                mSyncAdapterController.requestSync();
+                LogUtils.d(LOG_TAG, "onLoadFinished with empty result, get ready to sync at first");
+                mSyncAdapterController.requestSyncFirst();
                 return;
             }
             mVolumeListCursor = volumesCursor;

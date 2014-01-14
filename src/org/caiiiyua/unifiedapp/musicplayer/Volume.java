@@ -90,6 +90,10 @@ public class Volume {
         return values;
     }
 
+    public long getVolumeNum() {
+        return mVolId;
+    }
+
     public Uri getTrackUri(long trackId) {
         Log.d(LuooConstantUtils.TAG, "getTrackUri with id:" + trackId);
         if (mMusicList == null) return null;

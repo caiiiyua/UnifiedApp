@@ -7,6 +7,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -120,7 +121,7 @@ public class UnifiedContentProvider extends ContentProvider {
         Context context = getContext();
         SQLiteDatabase db = mDatabase;
         int table = match >> BASE_SHIFT;
-        String id;
+        long id = -1;
         String tableName = TABLE_NAMES.valueAt(table);
 
         switch (match) {
@@ -129,8 +130,8 @@ public class UnifiedContentProvider extends ContentProvider {
         case Tracks.TRACKS_ID:
             break;
         case Volumes.VOLUMES:
-            long longId = db.insert(tableName, null, values);
-            LogUtils.d(LogUtils.TAG, "Insert in %s with _id: %d", tableName, longId);
+            id = db.insert(tableName, null, values);
+            LogUtils.d(LogUtils.TAG, "Insert in %s with _id: %d", tableName, id);
             break;
         case Tracks.TRACKS:
             break;
@@ -138,7 +139,9 @@ public class UnifiedContentProvider extends ContentProvider {
         default:
             break;
         }
-        return null;
+        Uri notifyUri = Uri.withAppendedPath(uri, String.valueOf(id));
+        context.getContentResolver().notifyChange(notifyUri, null);
+        return notifyUri;
     }
 
     @Override
