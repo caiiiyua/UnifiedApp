@@ -5,6 +5,13 @@ import org.caiiiyua.unifiedapp.ui.ControllableActivity;
 import org.caiiiyua.unifiedapp.ui.UIProvider;
 import org.caiiiyua.unifiedapp.utils.LogUtils;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.assist.ImageSize;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
+
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
@@ -65,7 +72,7 @@ public class VolumeListAdapter extends CursorAdapter {
             return;
         }
         View convertView = view;
-        ViewHolder viewHolder;
+        final ViewHolder viewHolder;
         if (convertView == null) {
             convertView = newVolumeCellView(context, null);
         }
@@ -78,7 +85,44 @@ public class VolumeListAdapter extends CursorAdapter {
         viewHolder.lableView.setText(lable);
         viewHolder.descriptionView.setText(description);
         if (coverUri != null) {
-            viewHolder.coverView.setImageURI(coverUri);
+            DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    .showImageOnLoading(R.drawable.cover)
+                    .showImageForEmptyUri(R.drawable.cover)
+                    .showImageOnFail(R.drawable.cover)
+                    .cacheInMemory(true)
+                    .cacheOnDisc(true)
+                    .considerExifParams(true)
+                    .build();
+
+            ImageLoader.getInstance().loadImage(coverUri.toString(),
+                    options, new ImageLoadingListener() {
+                        
+                        @Override
+                        public void onLoadingStarted(String imageUri, View view) {
+                        }
+                        
+                        @Override
+                        public void onLoadingFailed(String imageUri, View view,
+                                FailReason failReason) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+                        
+                        @Override
+                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                            viewHolder.coverView.setImageBitmap(loadedImage);
+                        }
+                        
+                        @Override
+                        public void onLoadingCancelled(String imageUri, View view) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+                    });
+//            viewHolder.coverView.setImageURI(coverUri);
+//            viewHolder.coverView.setImageResource(R.drawable.cover);
+        } else {
+            viewHolder.coverView.setImageResource(R.drawable.cover);
         }
         LogUtils.d(LogUtils.TAG, "BindView with lable: %s, description: %s, cover: %s",
                 lable, description, coverUri);

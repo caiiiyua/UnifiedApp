@@ -20,6 +20,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/cell_bottom_margin"
     android:layout_marginLeft="@dimen/cell_left_margin"
     android:layout_marginRight="@dimen/cell_right_margin">
 
@@ -34,7 +35,7 @@
         android:id="@+id/cover_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="1dp"
+        android:paddingBottom="4dp"
         android:gravity="center">
     <ImageView
         android:id="@+id/cover"

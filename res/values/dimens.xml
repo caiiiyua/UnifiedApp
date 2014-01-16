@@ -5,5 +5,10 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="cell_left_margin">4dp</dimen>
     <dimen name="cell_right_margin">4dp</dimen>
+    <dimen name="cell_top_margin">4dp</dimen>
+    <dimen name="cell_bottom_margin">4dp</dimen>
+
+    <dimen name="volume_cover_height">218dp</dimen>
+    <dimen name="volume_cover_weigth">348dp</dimen>
 
 </resources>

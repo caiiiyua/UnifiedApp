@@ -39,7 +39,7 @@ public class VolumeListLoader extends CursorLoader {
     }
 
     private String buildVolumeOrder() {
-        return UIProvider.VOLUME_COLUMN_VOL_NUM + " DESC";
+        return UIProvider.VOLUME_COLUMN_VOL_NUM + " ASC";
     }
 
     private String[] buildVolumeProjection() {

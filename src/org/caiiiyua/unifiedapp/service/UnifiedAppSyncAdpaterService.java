@@ -43,6 +43,9 @@ public class UnifiedAppSyncAdpaterService extends Service {
                     authority, extras.toString());
             String extraSync = extras.getString(EXTRA_SYNC);
             long volumeNum = extras.getLong(EXTRA_VOLUME_NUM);
+            if (volumeNum <= 0 && !EXTRA_SYNC_FIRST.equals(extraSync)) {
+                return;
+            }
 
             if (EXTRA_SYNC_FIRST.equals(extraSync)
                     || EXTRA_SYNC_UPDATE.equals(extraSync)) {
