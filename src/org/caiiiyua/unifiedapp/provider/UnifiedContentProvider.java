@@ -4,6 +4,7 @@ import org.caiiiyua.unifiedapp.provider.UnifiedContentProvider.Volumes.VolumeCol
 import org.caiiiyua.unifiedapp.utils.LogUtils;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.UriMatcher;
@@ -83,7 +84,8 @@ public class UnifiedContentProvider extends ContentProvider {
         case Volumes.VOLUMES:
             LogUtils.d(LogUtils.TAG, "select * from %s where %s", tableName, selection);
             c = db.query(tableName, Volumes.VOLUME_PROJECTION, selection, selectionArgs,
-                    null, null, sortOrder, null);
+                    null, null, sortOrder);
+            c.setNotificationUri(context.getContentResolver(), uri);
             break;
         case Tracks.TRACKS:
             break;
@@ -139,8 +141,8 @@ public class UnifiedContentProvider extends ContentProvider {
         default:
             break;
         }
-        Uri notifyUri = Uri.withAppendedPath(uri, String.valueOf(id));
-        context.getContentResolver().notifyChange(notifyUri, null);
+        Uri notifyUri = ContentUris.withAppendedId(uri, id);
+        notifyVolumes(context, uri, id);
         return notifyUri;
     }
 
@@ -157,6 +159,16 @@ public class UnifiedContentProvider extends ContentProvider {
         return 0;
     }
 
+    private void  notifyVolumes(Context context, Uri volumeUri, long id) {
+        Uri notifyUri = ContentUris.withAppendedId(volumeUri, id);
+        notifyUI(context, notifyUri);
+        notifyUI(context, volumeUri);
+    }
+
+    private void notifyUI(Context context, Uri notifyUri) {
+        LogUtils.d(TAG, "Provider notifyUI with URI: %s", notifyUri);
+        context.getContentResolver().notifyChange(notifyUri, null);
+    }
     /**
      * Wrap the UriMatcher call so we can throw a runtime exception if an unknown Uri is passed in
      * @param uri the Uri to match
@@ -187,6 +199,7 @@ public class UnifiedContentProvider extends ContentProvider {
         public static final int VOLUMES_VOLUME_MUSICS_KEY = VOLUMES_BASE + 5;
         public static final int VOLUMES_VOLUME_COVER_URI = VOLUMES_BASE + 6;
         public static final int VOLUMES_VOLUME_URL = VOLUMES_BASE + 7;
+        public static final int VOLUMES_VOLUME_CATEGORY = VOLUMES_BASE + 8;
 
         public static final class VolumeColumns implements BaseColumns {
             /**
@@ -213,6 +226,26 @@ public class UnifiedContentProvider extends ContentProvider {
              * This string column contains the human readable of Volume topic
              */
             public static final String VOL_URL = "vol_url";
+            /**
+             * This string column contains the human readable of Volume category
+             */
+            public static final String VOL_CATEGORY = "vol_category";
+            /**
+             * This string column contains the human readable of Volume category id
+             */
+            public static final String VOL_CATEGORY_ID = "vol_category_id";
+            /**
+             * This string column contains the human readable of Volume tag
+             */
+            public static final String VOL_TAG = "vol_tag";
+            /**
+             * This string column contains the human readable of Volume tag id
+             */
+            public static final String VOL_TAG_ID = "vol_tag_id";
+            /**
+             * This string column contains the human readable of Volume dat
+             */
+            public static final String VOL_DATE = "vol_date";
         }
 
         public static final String[] VOLUME_PROJECTION = {
@@ -222,7 +255,12 @@ public class UnifiedContentProvider extends ContentProvider {
             VolumeColumns.VOL_DESCRIPTION,
             VolumeColumns.MUSIC_LIST_KEY,
             VolumeColumns.COVER_URI,
-            VolumeColumns.VOL_URL
+            VolumeColumns.VOL_URL,
+            VolumeColumns.VOL_CATEGORY,
+            VolumeColumns.VOL_CATEGORY_ID,
+            VolumeColumns.VOL_TAG,
+            VolumeColumns.VOL_TAG_ID,
+            VolumeColumns.VOL_DATE
         };
 
         public static final int VOLUME_COLUMN_ID = 0;
@@ -232,13 +270,23 @@ public class UnifiedContentProvider extends ContentProvider {
         public static final int VOLUME_COLUMN_MUSIC_LIST_KEY = 4;
         public static final int VOLUME_COLUMN_COVER_URI = 5;
         public static final int VOLUME_COLUMN_VOL_URL = 6;
+        public static final int VOLUME_COLUMN_VOL_CATEGORY = 7;
+        public static final int VOLUME_COLUMN_VOL_CATEGORY_ID = 8;
+        public static final int VOLUME_COLUMN_VOL_TAG = 9;
+        public static final int VOLUME_COLUMN_VOL_TAG_ID = 10;
+        public static final int VOLUME_COLUMN_VOL_DATE = 11;
 
         private static final String VOLUMES_TABLE_COLUMNS = VolumeColumns.VOL_NUM + " integer, "
                 + VolumeColumns.VOL_TOPIC + " text, "
                 + VolumeColumns.VOL_DESCRIPTION + " text, "
                 + VolumeColumns.MUSIC_LIST_KEY + " text, "
                 + VolumeColumns.COVER_URI + " text, "
-                + VolumeColumns.VOL_URL + " text ";
+                + VolumeColumns.VOL_URL + " text, "
+                + VolumeColumns.VOL_CATEGORY + " text, "
+                + VolumeColumns.VOL_CATEGORY_ID + " integer, "
+                + VolumeColumns.VOL_TAG + " text, "
+                + VolumeColumns.VOL_TAG_ID + " integer, "
+                + VolumeColumns.VOL_DATE + " text ";
 
         @Override
         public String getTableName() {

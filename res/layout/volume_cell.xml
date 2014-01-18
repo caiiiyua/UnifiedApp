@@ -20,9 +20,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/cell_bottom_margin"
-    android:layout_marginLeft="@dimen/cell_left_margin"
-    android:layout_marginRight="@dimen/cell_right_margin">
+    android:paddingTop="@dimen/cell_top_margin"
+    android:paddingBottom="@dimen/cell_bottom_margin"
+    android:paddingLeft="@dimen/cell_left_margin"
+    android:paddingRight="@dimen/cell_right_margin">
 
     <TextView
         android:id="@+id/vol_id_lable"

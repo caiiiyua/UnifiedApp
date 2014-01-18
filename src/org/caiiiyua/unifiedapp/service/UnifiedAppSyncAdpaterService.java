@@ -1,8 +1,10 @@
 package org.caiiiyua.unifiedapp.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.caiiiyua.unifiedapp.musicplayer.Volume;
+import org.caiiiyua.unifiedapp.parser.VolumeListParser;
 import org.caiiiyua.unifiedapp.utils.LogUtils;
 import org.caiiiyua.unifiedapp.utils.LuooHelper;
 
@@ -65,28 +67,26 @@ public class UnifiedAppSyncAdpaterService extends Service {
                 volumeNum--;
             }
             for (String url : loadUrList) {
-                Volume volume = generateDataFromServer(context, url);
-                volume.insert(context);
+                generateDataFromServer(context, url);
             }
         }
 
         private void syncUpdate(Context context, long latestNum) {
-            Volume volume = generateDataFromServer(context, LuooHelper.HOME_URL);
-            if (volume.getVolumeNum() > latestNum) {
-                volume.insert(context);
-            } else {
-                // Nothing need to be updated
-            }
+            generateDataFromServer(context, LuooHelper.VOL_PAGE_URL_UPDATE);
         }
     }
 
-    private static Volume generateDataFromServer(Context context, String url) {
-        Volume volume = new Volume(url);
-        volume.initializeMetaInfo();
-//        volume.insert(context);
-        LogUtils.d(LogUtils.TAG, "onPerformSync generate via %s and got %s",
-                url, volume.toString());
-        return volume;
+    private static void generateDataFromServer(Context context, String url) {
+        VolumeListParser parser = new VolumeListParser(url);
+        try {
+            for (Volume volume : parser.parse()) {
+                volume.insert(context);
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return;
     }
 
     private UnifiedAppSyncAdpaterImpl mSyncAdapterImpl = null;

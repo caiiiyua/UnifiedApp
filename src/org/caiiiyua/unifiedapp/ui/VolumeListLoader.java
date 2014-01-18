@@ -17,7 +17,8 @@ public class VolumeListLoader extends CursorLoader {
     }
 
     public VolumeListLoader(Context context, long lastUpdate) {
-        super(context);
+        super(context, Uri.parse(UIProvider.VOLUME_BASE_URI), buildVolumeProjection(), null,
+                null, buildVolumeOrder());
         mLastUpdate  = lastUpdate;
         LogUtils.d(LogUtils.TAG, "VolumeListLoader onCreate");
     }
@@ -25,12 +26,8 @@ public class VolumeListLoader extends CursorLoader {
     @Override
     public Cursor loadInBackground() {
         LogUtils.d(LogUtils.TAG, "VolumeListLoader loadInBackgournd start");
-        String [] projection = buildVolumeProjection();
-        String order = buildVolumeOrder();
-        Uri uri = Uri.parse(UIProvider.VOLUME_BASE_URI);
-        LogUtils.d(LogUtils.TAG, "VolumeListLoader loadInBackground with uri: %s", uri);
-        final Cursor volumes = getContext().getContentResolver().query(uri,
-                    projection, null, null, order);
+        LogUtils.d(LogUtils.TAG, "VolumeListLoader loadInBackground with uri: %s", getUri());
+        final Cursor volumes = super.loadInBackground();
         if (volumes == null) {
             LogUtils.d(LogUtils.TAG, "VolumeListLoader loadInBackground result cursor null");
         }
@@ -38,11 +35,11 @@ public class VolumeListLoader extends CursorLoader {
         return volumes;
     }
 
-    private String buildVolumeOrder() {
+    private static String buildVolumeOrder() {
         return UIProvider.VOLUME_COLUMN_VOL_NUM + " ASC";
     }
 
-    private String[] buildVolumeProjection() {
+    private static String[] buildVolumeProjection() {
         return UIProvider.VOLUME_PROJECTION;
     }
 

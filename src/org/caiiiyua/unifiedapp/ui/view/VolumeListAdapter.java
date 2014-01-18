@@ -81,9 +81,11 @@ public class VolumeListAdapter extends CursorAdapter {
         String lable = cursor.getString(UIProvider.VOLUME_COLUMN_VOL_TOPIC);
         String description = cursor.getString(UIProvider.VOLUME_COLUMN_VOL_DESCRIPITON);
         Uri coverUri = Uri.parse(cursor.getString(UIProvider.VOLUME_COLUMN_COVER_URI));
+        long volNum = cursor.getLong(UIProvider.VOLUME_COLUMN_VOL_NUM);
 
         viewHolder.lableView.setText(lable);
         viewHolder.descriptionView.setText(description);
+        viewHolder.coverView.setImageResource(R.drawable.cover);
         if (coverUri != null) {
             DisplayImageOptions options = new DisplayImageOptions.Builder()
                     .showImageOnLoading(R.drawable.cover)
@@ -124,8 +126,8 @@ public class VolumeListAdapter extends CursorAdapter {
         } else {
             viewHolder.coverView.setImageResource(R.drawable.cover);
         }
-        LogUtils.d(LogUtils.TAG, "BindView with lable: %s, description: %s, cover: %s",
-                lable, description, coverUri);
+        LogUtils.d(LogUtils.TAG, "BindView with pageNum:, volNum: %d, lable: %s, description: %s, cover: %s",
+                volNum, lable, description, coverUri);
     }
 
 }

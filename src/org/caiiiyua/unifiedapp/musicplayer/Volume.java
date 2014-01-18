@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import org.caiiiyua.unifiedapp.content.CursorCreator;
+import org.caiiiyua.unifiedapp.parser.ContentParser;
+import org.caiiiyua.unifiedapp.parser.VolumeListParser;
+import org.caiiiyua.unifiedapp.parser.VolumeParser;
 import org.caiiiyua.unifiedapp.provider.UnifiedContentProvider.Volumes;
 import org.caiiiyua.unifiedapp.ui.UIProvider;
 import org.caiiiyua.unifiedapp.utils.LogUtils;
@@ -17,31 +20,60 @@ import android.util.Log;
 
 public class Volume {
 
+    public static final String VOLUME_COVER = "640x452";
+    public static final String LIST_COVER = "160x120";
+    public static final String VOLUME_NUM = "vol.";
+
     private long mId;
     private long mVolId;
     private String mTopic;
     private String mDescription;
     private ArrayList<Music> mMusicList;
-    private Uri mCoverUri;
+    private String mCoverUri;
     private String mUrlString;
     private String mMusicUriBase;
     private MusicHtmlParser mMusicParser;
+    private String mVolDate;
+    private String mCategory;
+    private String mVolTag;
+    private long mVolTagId;
 
     public Volume() {
-        // TODO Auto-generated constructor stub
+    }
+
+    public Volume(VolumeParser parser) {
+        Volume(parser.parse());
+    }
+
+    public void Volume(final Volume volume) {
+        mVolId = volume.mVolId;
+        mTopic = volume.mTopic;
+        mDescription = volume.mDescription;
+        mCoverUri = volume.mCoverUri;
+        mUrlString = volume.mUrlString;
+        mVolDate = volume.mVolDate;
+        mCategory = volume.mCategory;
+        mVolTag = volume.mVolTag;
+        mVolTagId = volume.mVolTagId;
     }
 
     public Volume(String url) {
         mUrlString = url;
-        mMusicParser = new MusicHtmlParser(mUrlString);
+//        mMusicParser = new MusicHtmlParser(mUrlString);
     }
 
-    public Volume(long volId, String topic, String description, String url) {
+    public Volume(long volId, String topic, String description, String url,
+            String mCoverUrl, String volDate, String category, String volTag, long volTagId) {
         mVolId = volId;
         mTopic = topic;
         mDescription = description;
         mUrlString = url;
-        mMusicParser = new MusicHtmlParser(mUrlString);
+        mCoverUri = mCoverUrl;
+        mVolDate = volDate;
+        mCategory = category;
+        mVolTag = volTag;
+        mVolTagId = volTagId;
+//        mMusicParser = new MusicHtmlParser(mUrlString);
     }
 
     public Volume(Cursor c) {
@@ -49,8 +81,12 @@ public class Volume {
         mVolId = c.getLong(UIProvider.VOLUME_COLUMN_VOL_NUM);
         mTopic = c.getString(UIProvider.VOLUME_COLUMN_VOL_TOPIC);
         mDescription = c.getString(UIProvider.VOLUME_COLUMN_VOL_DESCRIPITON);
-        mCoverUri = Uri.parse(c.getString(UIProvider.VOLUME_COLUMN_COVER_URI));
+        mCoverUri = c.getString(UIProvider.VOLUME_COLUMN_COVER_URI);
         mUrlString = c.getString(UIProvider.VOLUME_COLUMN_VOL_URL);
+        mCategory = c.getString(UIProvider.VOLUME_COLUMN_VOL_CATEGORY);
+        mVolDate = c.getString(UIProvider.VOLUME_COLUMN_VOL_DATE);
+        mVolTag = c.getString(UIProvider.VOLUME_COLUMN_VOL_TAG);
+        mVolTagId = c.getLong(UIProvider.VOLUME_COLUMN_VOL_TAG_ID);
     }
 
     public boolean initializeMetaInfo() {
@@ -67,7 +103,7 @@ public class Volume {
             mVolId = mMusicParser.getVolId();
             mUrlString = LuooConstantUtils.buildVolUrl(mVolId);
             mMusicUriBase = LuooConstantUtils.buildMusicUriBase(mVolId);
-            mCoverUri = Uri.parse(mMusicParser.getVolCover());
+            mCoverUri = mMusicParser.getVolCover();
             mMusicList = mMusicParser.getMusicList(mVolId);
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -83,9 +119,15 @@ public class Volume {
         values.put(UIProvider.VolumeColumns.VOL_NUM, mVolId);
         values.put(UIProvider.VolumeColumns.VOL_TOPIC, mTopic);
         values.put(UIProvider.VolumeColumns.VOL_DESCRIPTION, mDescription);
-        values.put(UIProvider.VolumeColumns.MUSIC_LIST_KEY, mMusicList.toString());
-        values.put(UIProvider.VolumeColumns.COVER_URI, mCoverUri.toString());
+        values.put(UIProvider.VolumeColumns.MUSIC_LIST_KEY, mMusicList != null ?
+                mMusicList.toString() : "");
+        values.put(UIProvider.VolumeColumns.COVER_URI, mCoverUri != null ? mCoverUri.toString()
+                : "");
         values.put(UIProvider.VolumeColumns.VOL_URL, mUrlString);
+        values.put(UIProvider.VolumeColumns.VOL_CATEGORY, mCategory);
+        values.put(UIProvider.VolumeColumns.VOL_DATE, mVolDate);
+        values.put(UIProvider.VolumeColumns.VOL_TAG, mVolTag);
+        values.put(UIProvider.VolumeColumns.VOL_TAG_ID, mVolTagId);
 
         return values;
     }
@@ -109,14 +151,14 @@ public class Volume {
     public String toString() {
         return "[ " + mVolId + ", "
                 + mTopic + ", " + mDescription + ", " + mUrlString + ", "
-                + mCoverUri + ", " + mMusicUriBase + " ]";
+                + mCoverUri + ", " + mVolDate + ", " + mCategory + ", "
+                + mVolTag + " ]";
     }
 
     public static final CursorCreator<Volume> FACTORY = new CursorCreator<Volume>() {
 
         @Override
         public Volume createFromCursor(Cursor c) {
-            // TODO Auto-generated method stub
             return new Volume(c);
         }
     };

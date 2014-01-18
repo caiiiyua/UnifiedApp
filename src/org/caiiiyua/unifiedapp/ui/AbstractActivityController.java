@@ -454,6 +454,7 @@ public abstract class AbstractActivityController implements ActivityController {
     }
 
     private void updateVolumeList() {
+        LogUtils.d(LogUtils.TAG, "VolumeLoads updateVolumeList");
         for (VolumesUpdateListener listener : mVolumesUpdateListeners) {
             listener.onVolumesUpdated(mVolumeListCursor);
         }
