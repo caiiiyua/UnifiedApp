@@ -53,7 +53,6 @@ public class SyncAdapterController {
         if (!TextUtils.isEmpty(extraSync)) {
             settingsBundle.putString(EXTRA_SYNC, extraSync);
         }
-        settingsBundle.putLong(EXTRA_VOLUME_NUM, mVolumeNum);
         ContentResolver.requestSync(mAccount, AUTHORITY, settingsBundle);
     }
 

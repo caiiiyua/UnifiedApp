@@ -82,8 +82,8 @@ public class UnifiedContentProvider extends ContentProvider {
             c = db.query(tableName, Volumes.VOLUME_PROJECTION, null, null, null, null, null);
             break;
         case Volumes.VOLUMES:
-            LogUtils.d(LogUtils.TAG, "select * from %s where %s", tableName, selection);
-            c = db.query(tableName, Volumes.VOLUME_PROJECTION, selection, selectionArgs,
+            LogUtils.d(LogUtils.TAG, "select %s from %s where %s", projection.toString(), tableName, selection);
+            c = db.query(tableName, projection, selection, selectionArgs,
                     null, null, sortOrder);
             c.setNotificationUri(context.getContentResolver(), uri);
             break;
@@ -261,6 +261,10 @@ public class UnifiedContentProvider extends ContentProvider {
             VolumeColumns.VOL_TAG,
             VolumeColumns.VOL_TAG_ID,
             VolumeColumns.VOL_DATE
+        };
+
+        public static final String[] VOLUME_NUM_PROJECTION = {
+            VolumeColumns.VOL_NUM
         };
 
         public static final int VOLUME_COLUMN_ID = 0;

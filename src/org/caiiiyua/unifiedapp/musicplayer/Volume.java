@@ -8,12 +8,14 @@ import org.caiiiyua.unifiedapp.parser.ContentParser;
 import org.caiiiyua.unifiedapp.parser.VolumeListParser;
 import org.caiiiyua.unifiedapp.parser.VolumeParser;
 import org.caiiiyua.unifiedapp.provider.UnifiedContentProvider.Volumes;
+import org.caiiiyua.unifiedapp.provider.UnifiedContentProvider.Volumes.VolumeColumns;
 import org.caiiiyua.unifiedapp.ui.UIProvider;
 import org.caiiiyua.unifiedapp.utils.LogUtils;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -166,5 +168,46 @@ public class Volume {
     public void insert(Context context) {
         LogUtils.d(LogUtils.TAG, "insert a Volume: %s", toString());
         context.getContentResolver().insert(Volumes.CONTENT_URI, toContentValues());
+    }
+
+    public void insertWithoutDuplicate(Context context) {
+        boolean duplicate = false;
+        long latest = 0;
+        long oldest = 0;
+        Cursor cursor = context.getContentResolver().query(Volumes.CONTENT_URI,
+                Volumes.VOLUME_NUM_PROJECTION, null, null, UIProvider.VOLUME_COLUMN_VOL_NUM + " ASC");
+        if (cursor == null || cursor.isClosed()) return;
+        try {
+            if (cursor.moveToFirst()) {
+                latest = cursor.getLong(Volumes.VOLUME_COLUMN_VOL_NUM);
+            }
+            if (cursor.moveToLast()) {
+                oldest = cursor.getLong(Volumes.VOLUME_COLUMN_VOL_NUM);
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+                cursor = null;
+            }
+        }
+        if (mVolId <= latest && mVolId >= oldest) {
+            duplicate = true;
+        }
+        if (duplicate) {
+            LogUtils.d(LogUtils.TAG, "insert a duplicate Volume with id: %d which included in [%d, %d]",
+                    mVolId, oldest, latest);
+            return;
+        }
+        LogUtils.d(LogUtils.TAG, "insert a Volume: %s", toString());
+        context.getContentResolver().insert(Volumes.CONTENT_URI, toContentValues());
+    }
+
+    public boolean isDuplicate(long latest, long oldest) {
+        LogUtils.d(LogUtils.TAG, "insert a duplicate Volume with id: %d which included in [%d, %d]",
+                mVolId, oldest, latest);
+        if (mVolId <= latest && mVolId >= oldest) {
+            return true;
+        }
+        return false;
     }
 }
