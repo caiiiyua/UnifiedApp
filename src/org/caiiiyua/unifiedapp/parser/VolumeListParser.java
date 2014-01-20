@@ -23,7 +23,7 @@ public class VolumeListParser implements ContentParser<Volume> {
     public LinkedList<Volume> parse() throws IOException {
         LinkedList<Volume> volumes = new LinkedList<Volume>();
         Elements elements = getVolumeElements();
-        LogUtils.d(LogUtils.TAG, "VolumeListParser getElements: %s", elements);
+//        LogUtils.d(LogUtils.TAG, "VolumeListParser getElements: %s", elements);
         for (Element volumeElement : elements) {
             Volume volume = new Volume(new VolumeParser(volumeElement));
             volumes.add(volume);

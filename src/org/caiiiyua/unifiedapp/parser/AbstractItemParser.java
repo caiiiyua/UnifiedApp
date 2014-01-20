@@ -14,12 +14,6 @@ public class AbstractItemParser implements ItemParser {
         mParser = parser;
     }
 
-    @Override
-    public Object parse() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     protected Element getElementByClass(String className, String tag) {
         LogUtils.d(LogUtils.TAG, "getElementByClass %s with tag: %s", className, tag);
         for (Element element : mParser.getElementsByClass(className)) {
@@ -28,5 +22,11 @@ public class AbstractItemParser implements ItemParser {
             }
         }
         return mParser;
+    }
+
+    @Override
+    public Object parse() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

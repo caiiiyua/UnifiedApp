@@ -144,7 +144,7 @@ public class Volume {
         for (Music metaInfo : mMusicList) {
             Log.d(LuooConstantUtils.TAG, "getTrackUri with metainfo:" + metaInfo);
             if (metaInfo.getTrackId() == trackId) {
-                return metaInfo.getTrackUri();
+                return Uri.parse(metaInfo.getTrackUri());
             }
         }
         return null;
@@ -166,7 +166,7 @@ public class Volume {
     };
 
     public void insert(Context context) {
-        LogUtils.d(LogUtils.TAG, "insert a Volume: %s", toString());
+//        LogUtils.d(LogUtils.TAG, "insert a Volume: %s", toString());
         context.getContentResolver().insert(Volumes.CONTENT_URI, toContentValues());
     }
 

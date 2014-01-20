@@ -17,13 +17,7 @@ public class UnifiedApplication extends Application {
     @SuppressWarnings("unused")
     @Override
     public void onCreate() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-//                    StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
-//                    StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
-            }
-
             super.onCreate();
-
             initImageLoader(getApplicationContext());
     }
 
@@ -34,8 +28,8 @@ public class UnifiedApplication extends Application {
             // method.
             ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context)
                             .threadPriority(Thread.NORM_PRIORITY - 2)
-                            .denyCacheImageMultipleSizesInMemory()
-                            .discCacheSize(2 * 1024 * 1024)
+                            .memoryCacheSize(8 * 1024 * 1024)
+                            .discCacheSize(32 * 1024 * 1024)
                             .discCacheFileNameGenerator(new Md5FileNameGenerator())
                             .writeDebugLogs() // Remove for release app
                             .build();

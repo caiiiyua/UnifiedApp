@@ -1,8 +1,13 @@
 package org.caiiiyua.unifiedapp.musicplayer;
 
+import org.caiiiyua.unifiedapp.parser.MusicParser;
+
 import android.net.Uri;
 
 public class Music {
+
+    public static final String MUSIC_COVER = "580x580";
+    public static final String LIST_COVER = "60x60";
 
     private long mId;
     private long mTrackId;
@@ -13,9 +18,9 @@ public class Music {
     private int mSize;
     private long mVolId;
     private String mDescription;
-    private Uri mCoverUri;
+    private String mCoverUri;
     private String mLrc;
-    private Uri mTrackUri;
+    private String mTrackUri;
 
     private static final String TAG = "MusicMetaInfo";
 
@@ -25,6 +30,22 @@ public class Music {
 
     public Music(long volId) {
         mVolId = volId;
+    }
+
+    public Music(MusicParser musicParser) {
+        Music(musicParser.parse());
+    }
+
+    private void Music(Music music) {
+        mVolId = music.getVolId();
+        mTrackId = music.getTrackId();
+        mAlbum = music.getAlbum();
+        mArtist = music.getArtist();
+        mName = music.getName();
+        mCoverUri = music.getCoverUri();
+        mTrackUri = music.getTrackUri();
+        mLrc = music.getLrc();
+        mDuration = music.getDuration();
     }
 
     public long getTrackId() {
@@ -99,19 +120,19 @@ public class Music {
         this.mDescription = description;
     }
 
-    public Uri getCoverUri() {
+    public String getCoverUri() {
         return mCoverUri;
     }
 
-    public void setCoverUri(Uri coverUri) {
+    public void setCoverUri(String coverUri) {
         this.mCoverUri = coverUri;
     }
 
-    public Uri getTrackUri() {
+    public String getTrackUri() {
         return mTrackUri;
     }
 
-    public void setTrackUri(Uri trackUri) {
+    public void setTrackUri(String trackUri) {
         this.mTrackUri = trackUri;
     }
 
@@ -125,7 +146,7 @@ public class Music {
 
     @Override
     public String toString() {
-        return "[ " + mTrackId + ", " + mName + ", " + mAlbum + ", " + mCoverUri +
+        return "[ " + mVolId + ", " + mTrackId + ", " + mName + ", " + mAlbum + ", " + mCoverUri +
                 ", " + mTrackUri + " ]";
     }
 }

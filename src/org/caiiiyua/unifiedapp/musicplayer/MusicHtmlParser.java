@@ -124,9 +124,9 @@ public class MusicHtmlParser {
                 metaInfo.setTrackId(getTrackId(element));
                 metaInfo.setName(getTrackName(element));
                 metaInfo.setAlbum(getTrackAlbum(element));
-                metaInfo.setCoverUri(Uri.parse(getTrackCover(element)));
-                Uri trackUri = Uri.parse(LuooConstantUtils
-                        .buildMusicTrackUri(volId, metaInfo.getTrackId()));
+                metaInfo.setCoverUri(getTrackCover(element));
+                String trackUri = LuooConstantUtils
+                        .buildMusicTrackUri(volId, metaInfo.getTrackId());
                 metaInfo.setTrackUri(trackUri);
                 Log.d(TAG, "Track info: " + metaInfo);
                 musicMetaInfos.add(metaInfo);

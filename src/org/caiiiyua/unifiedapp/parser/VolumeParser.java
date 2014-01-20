@@ -79,6 +79,7 @@ public class VolumeParser extends AbstractItemParser implements ItemParser {
         String dateString = "";
         for (Element element : mParser.getElementsByTag("span")) {
             dateString = element.text();
+            break;
         }
         return dateString;
     }

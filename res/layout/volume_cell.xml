@@ -25,13 +25,6 @@
     android:paddingLeft="@dimen/cell_left_margin"
     android:paddingRight="@dimen/cell_right_margin">
 
-    <TextView
-        android:id="@+id/vol_id_lable"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        />
     <LinearLayout
         android:id="@+id/cover_container"
         android:layout_width="fill_parent"
@@ -41,9 +34,17 @@
     <ImageView
         android:id="@+id/cover"
         android:layout_width="fill_parent"
-        android:layout_height="200dp"
+        android:layout_height="240dp"
         android:src="@drawable/cover"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/vol_id_lable"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    />
 
     <LinearLayout
         android:id="@+id/vol_description_container"

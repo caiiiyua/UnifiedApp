@@ -98,8 +98,9 @@ public class UnifiedAppSyncAdpaterService extends Service {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        int page = Integer.valueOf(url.charAt(url.length() - 1));
-        LogUtils.d(TAG, "Last loaded page number [%d]", page);
+        int page = Integer.valueOf(url.substring(url.lastIndexOf("=") + 1));
+        LogUtils.d(LogUtils.TAG, "Last loaded page number [%d] with url: %s, %s", page, url
+                , url.substring(url.lastIndexOf("=") + 1));
         updateOldestAndLatestId(context, update ? 1 : page );
         return;
     }
@@ -130,7 +131,9 @@ public class UnifiedAppSyncAdpaterService extends Service {
         if (page > 1) {
             updator.putInt(VOLUME_LAST_PAGE, page);
         }
-        
+        LogUtils.d(LogUtils.TAG, "Record preferences latest[%d], oldest[%d], last page[%d]",
+                latest, oldest, page);
+        updator.commit();
     }
     private UnifiedAppSyncAdpaterImpl mSyncAdapterImpl = null;
 
