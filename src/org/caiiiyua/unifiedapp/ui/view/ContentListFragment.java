@@ -5,11 +5,13 @@ import org.caiiiyua.unifiedapp.ui.AbstractActivityController;
 import org.caiiiyua.unifiedapp.ui.ControllableActivity;
 
 import android.app.ListFragment;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ public class ContentListFragment extends ListFragment {
     private ListView mContentListView;
     private ControllableActivity mActivity;
     private AbstractActivityController mController;
+    private TracksAdapter mTracksAdapter;
 
     public ContentListFragment(AbstractActivityController controller) {
         mController = controller;
@@ -43,21 +46,28 @@ public class ContentListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.content_list, null);
-//        mContentListView = (ListView)rootView.findViewById(R.id.content_list);
+        View rootView = inflater.inflate(R.layout.unified_list, null);
+        mContentListView = (ListView)rootView.findViewById(R.id.list_container);
         return rootView;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setListAdapter(new ArrayAdapter<String>(getActivity()
-                , android.R.layout.simple_list_item_1, texts));
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mActivity = (ControllableActivity) getActivity();
+        mTracksAdapter = new TracksAdapter(getActivity(),
+                mContentListView, getTracksCursor());
+//        mController.initContentLoader();
+    }
+
+    private Cursor getTracksCursor() {
+        // TODO Auto-generated method stub
+        return mController.getTracksCursor();
     }
 
     @Override

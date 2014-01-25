@@ -22,8 +22,6 @@ public class Music {
     private String mLrc;
     private String mTrackUri;
 
-    private static final String TAG = "MusicMetaInfo";
-
     public Music() {
         
     }
@@ -34,6 +32,20 @@ public class Music {
 
     public Music(MusicParser musicParser) {
         Music(musicParser.parse());
+    }
+
+    public Music(long volId, long trackId, String album, String artist,
+            String name, String coverUri, String trackUri, String lrc,
+            long duration) {
+        mVolId = volId;
+        mTrackId = trackId;
+        mAlbum = album;
+        mArtist = artist;
+        mName = name;
+        mCoverUri = coverUri;
+        mTrackUri = trackUri;
+        mLrc = lrc;
+        mDuration = duration;
     }
 
     private void Music(Music music) {

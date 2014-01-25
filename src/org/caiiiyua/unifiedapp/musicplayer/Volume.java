@@ -30,7 +30,8 @@ public class Volume {
     private long mVolId;
     private String mTopic;
     private String mDescription;
-    private ArrayList<Music> mMusicList;
+//    private ArrayList<Music> mMusicList;
+    private String mMusicUri;
     private String mCoverUri;
     private String mUrlString;
     private String mMusicUriBase;
@@ -57,6 +58,7 @@ public class Volume {
         mCategory = volume.mCategory;
         mVolTag = volume.mVolTag;
         mVolTagId = volume.mVolTagId;
+        mMusicUri = volume.mMusicUri;
     }
 
     public Volume(String url) {
@@ -89,31 +91,32 @@ public class Volume {
         mVolDate = c.getString(UIProvider.VOLUME_COLUMN_VOL_DATE);
         mVolTag = c.getString(UIProvider.VOLUME_COLUMN_VOL_TAG);
         mVolTagId = c.getLong(UIProvider.VOLUME_COLUMN_VOL_TAG_ID);
+        mMusicUri = c.getString(UIProvider.VOLUME_COLUMN_MUSIC_LIST_KEY);
     }
 
-    public boolean initializeMetaInfo() {
-        if (TextUtils.isEmpty(mUrlString)) {
-            return false;
-        }
-        if (mMusicParser == null) {
-            mMusicParser = new MusicHtmlParser(mUrlString);
-        }
-        
-        try {
-            mTopic = mMusicParser.getVolTopic();
-            mDescription = mMusicParser.getVolDescription();
-            mVolId = mMusicParser.getVolId();
-            mUrlString = LuooConstantUtils.buildVolUrl(mVolId);
-            mMusicUriBase = LuooConstantUtils.buildMusicUriBase(mVolId);
-            mCoverUri = mMusicParser.getVolCover();
-            mMusicList = mMusicParser.getMusicList(mVolId);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        return true;
-    }
+//    public boolean initializeMetaInfo() {
+//        if (TextUtils.isEmpty(mUrlString)) {
+//            return false;
+//        }
+//        if (mMusicParser == null) {
+//            mMusicParser = new MusicHtmlParser(mUrlString);
+//        }
+//        
+//        try {
+//            mTopic = mMusicParser.getVolTopic();
+//            mDescription = mMusicParser.getVolDescription();
+//            mVolId = mMusicParser.getVolId();
+//            mUrlString = LuooConstantUtils.buildVolUrl(mVolId);
+//            mMusicUriBase = LuooConstantUtils.buildMusicUriBase(mVolId);
+//            mCoverUri = mMusicParser.getVolCover();
+//            mMusicList = mMusicParser.getMusicList(mVolId);
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+//        
+//        return true;
+//    }
 
     public ContentValues toContentValues() {
         ContentValues values = new ContentValues();
@@ -121,10 +124,8 @@ public class Volume {
         values.put(UIProvider.VolumeColumns.VOL_NUM, mVolId);
         values.put(UIProvider.VolumeColumns.VOL_TOPIC, mTopic);
         values.put(UIProvider.VolumeColumns.VOL_DESCRIPTION, mDescription);
-        values.put(UIProvider.VolumeColumns.MUSIC_LIST_KEY, mMusicList != null ?
-                mMusicList.toString() : "");
-        values.put(UIProvider.VolumeColumns.COVER_URI, mCoverUri != null ? mCoverUri.toString()
-                : "");
+        values.put(UIProvider.VolumeColumns.MUSIC_LIST_KEY, mMusicUri);
+        values.put(UIProvider.VolumeColumns.COVER_URI, mCoverUri);
         values.put(UIProvider.VolumeColumns.VOL_URL, mUrlString);
         values.put(UIProvider.VolumeColumns.VOL_CATEGORY, mCategory);
         values.put(UIProvider.VolumeColumns.VOL_DATE, mVolDate);
@@ -138,17 +139,17 @@ public class Volume {
         return mVolId;
     }
 
-    public Uri getTrackUri(long trackId) {
-        Log.d(LuooConstantUtils.TAG, "getTrackUri with id:" + trackId);
-        if (mMusicList == null) return null;
-        for (Music metaInfo : mMusicList) {
-            Log.d(LuooConstantUtils.TAG, "getTrackUri with metainfo:" + metaInfo);
-            if (metaInfo.getTrackId() == trackId) {
-                return Uri.parse(metaInfo.getTrackUri());
-            }
-        }
-        return null;
-    }
+//    public Uri getTrackUri(long trackId) {
+//        Log.d(LuooConstantUtils.TAG, "getTrackUri with id:" + trackId);
+//        if (mMusicList == null) return null;
+//        for (Music metaInfo : mMusicList) {
+//            Log.d(LuooConstantUtils.TAG, "getTrackUri with metainfo:" + metaInfo);
+//            if (metaInfo.getTrackId() == trackId) {
+//                return Uri.parse(metaInfo.getTrackUri());
+//            }
+//        }
+//        return null;
+//    }
 
     public String toString() {
         return "[ " + mVolId + ", "

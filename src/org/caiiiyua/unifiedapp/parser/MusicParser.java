@@ -6,9 +6,6 @@ import org.caiiiyua.unifiedapp.musicplayer.Music;
 import org.caiiiyua.unifiedapp.utils.LogUtils;
 import org.jsoup.nodes.Element;
 
-import android.net.Uri;
-import android.util.Log;
-
 public class MusicParser extends AbstractItemParser implements ItemParser {
 
     private long mId;
@@ -45,7 +42,9 @@ public class MusicParser extends AbstractItemParser implements ItemParser {
         mTrackUri = getTrackUri();
         mLrc = getLrc();
         mDuration = getDuration();
-        return null;
+        Music music = new Music(mVolId, mTrackId, mAlbum, mArtist, mName, mCoverUri, mTrackUri
+                , mLrc, mDuration);
+        return music;
     }
 
     private long getDuration() {
@@ -79,13 +78,17 @@ public class MusicParser extends AbstractItemParser implements ItemParser {
     }
 
     private String getArtist() {
-        // TODO Auto-generated method stub
-        return null;
+        String artist = null;
+        Element artistElement = getElementByClass("track-album", "a");
+        artist = artistElement.text().split("-")[0];
+        return artist;
     }
 
     private String getAlbum() {
-        // TODO Auto-generated method stub
-        return null;
+        String album = null;
+        Element albumElement = getElementByClass("track-album", "a");
+        album = albumElement.text().split("-")[1];
+        return album;
     }
 
     private long getTrackId() {

@@ -100,6 +100,9 @@ public abstract class AbstractActivityController implements ActivityController {
     private ArrayList<Volume> mVolumeList = new ArrayList<Volume>();
     private ArrayList<VolumesUpdateListener> mVolumesUpdateListeners
                                   = new ArrayList<VolumesUpdateListener>();
+    private Cursor mTracksCursor;
+    private ArrayList<TracksUpdateListener> mTracksUpdateListeners
+                        = new ArrayList<TracksUpdateListener>();
 
     public AbstractActivityController(ControllableActivity activity, ViewMode viewMode) {
         mActivity = activity;
@@ -423,14 +426,15 @@ public abstract class AbstractActivityController implements ActivityController {
     // Show content of this view
     public void show(int position) {
         switch (mViewMode.getMode()) {
-        case ViewMode.VOL_LIST: 
+        case ViewMode.VOL_LIST:
             ContentListFragment contentListFragment = new ContentListFragment(this);
             launchFragment(contentListFragment, TAG_CONTENT_LIST);
             mViewMode.enterContentListMode();
             break;
-        case ViewMode.CONTENT_LIST: 
+        case ViewMode.CONTENT_LIST:
             mContentPagerController.show(position);
             mViewMode.enterContentViewMode();
+//            mSyncAdapterController.requestSyncTracks();
             break;
         default:
             break;
@@ -457,6 +461,14 @@ public abstract class AbstractActivityController implements ActivityController {
         LogUtils.d(LogUtils.TAG, "VolumeLoads updateVolumeList");
         for (VolumesUpdateListener listener : mVolumesUpdateListeners) {
             listener.onVolumesUpdated(mVolumeListCursor);
+        }
+    }
+
+
+    private void updateTracks() {
+        LogUtils.d(LogUtils.TAG, "TracksLoads updateTracks");
+        for (TracksUpdateListener listener : mTracksUpdateListeners) {
+            listener.onTracksUpdated(mTracksCursor);
         }
     }
 
@@ -519,5 +531,45 @@ public abstract class AbstractActivityController implements ActivityController {
             mVolumeListCursor = null;
         }
 
+    }
+
+    public void initContentLoader() {
+        LogUtils.d(LogUtils.TAG, "initContentLoader");
+        LoaderCallbacks<Cursor> trackLoads = new TrackLoads();
+        Loader<Cursor> loader = mLoaderManager.initLoader(LOADER_TRACK_LIST, null, trackLoads);
+    }
+
+    private class TrackLoads implements LoaderCallbacks<Cursor> {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            LogUtils.d(LogUtils.TAG, "TrackLoads onCreateLoader");
+            return new VolumeListLoader(mContext, System.currentTimeMillis());
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            Cursor tracks = data;
+            if (tracks == null || tracks.getCount() == 0) {
+                LogUtils.d(LOG_TAG, "onLoadFinished with empty result, get ready to sync at first");
+                mSyncAdapterController.requestSyncFirst();
+                return;
+            }
+            mTracksCursor = tracks;
+            updateTracks();
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            if (mTracksCursor != null && !mTracksCursor.isClosed()) {
+                mTracksCursor.close();
+            }
+            mTracksCursor = null;
+        }
+
+    }
+
+    public Cursor getTracksCursor() {
+        return mTracksCursor;
     }
 }
